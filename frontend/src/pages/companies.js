@@ -20,10 +20,10 @@ const companies = [
   {
     id: '2569ce0d517a7f06d3ea1f24',
     createdAt: '27/03/2019',
-    description: 'Dropbox is a file hosting service that offers cloud storage, file synchronization, a personal cloud.',
+    description: 'on, a personal cloud.',
     logo: '/assets/logos/logo-dropbox.png',
-    title: 'Dropbox',
-    downloads: '594'
+    title: 'Hotel A',
+    downloads: '95%'
   },
   {
     id: 'ed2b900870ceba72d203ec15',
@@ -48,30 +48,15 @@ const companies = [
     logo: '/assets/logos/logo-lyft.png',
     title: 'Lyft',
     downloads: '406'
-  },
-  {
-    id: '1ed68149f65fbc6089b5fd07',
-    createdAt: '04/04/2019',
-    description: 'GitHub is a web-based hosting service for version control of code using Git.',
-    logo: '/assets/logos/logo-github.png',
-    title: 'GitHub',
-    downloads: '835'
-  },
-  {
-    id: '5dab321376eff6177407e887',
-    createdAt: '04/04/2019',
-    description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
-    logo: '/assets/logos/logo-squarespace.png',
-    title: 'Squarespace',
-    downloads: '835'
   }
+  
 ];
 
 const Page = () => (
   <>
     <Head>
       <title>
-        Companies | Human Trafficking Portal
+        Law Enforcement Portal
       </title>
     </Head>
     <Box
@@ -90,14 +75,14 @@ const Page = () => (
           >
             <Stack spacing={1}>
               <Typography variant="h4">
-                Crime Mapping
+                Law Enforcement
               </Typography>
               <Stack
                 alignItems="center"
                 direction="row"
                 spacing={1}
               >
-                {/* <Button
+                <Button
                   color="inherit"
                   startIcon={(
                     <SvgIcon fontSize="small">
@@ -116,11 +101,11 @@ const Page = () => (
                   )}
                 >
                   Export
-                </Button> */}
+                </Button>
               </Stack>
             </Stack>
             <div>
-              {/* <Button
+              <Button
                 startIcon={(
                   <SvgIcon fontSize="small">
                     <PlusIcon />
@@ -129,7 +114,7 @@ const Page = () => (
                 variant="contained"
               >
                 Add
-              </Button> */}
+              </Button>
             </div>
           </Stack>
           <CompaniesSearch />
@@ -144,11 +129,11 @@ const Page = () => (
                 lg={4}
                 key={company.id}
               >
-                {/* <CompanyCard company={company} /> */}
+                <CompanyCard company={company} />
               </Grid>
             ))}
           </Grid>
-          {/* <Box
+          <Box
             sx={{
               display: 'flex',
               justifyContent: 'center'
@@ -158,7 +143,7 @@ const Page = () => (
               count={3}
               size="small"
             />
-          </Box> */}
+          </Box>
         </Stack>
       </Container>
     </Box>

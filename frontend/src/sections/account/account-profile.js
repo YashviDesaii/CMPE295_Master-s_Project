@@ -11,10 +11,10 @@ import {
 
 const user = {
   avatar: '/assets/avatars/avatar-anika-visser.png',
-  city: 'Los Angeles',
+  city: 'San Jose',
   country: 'USA',
-  jobTitle: 'Senior Developer',
-  name: 'Anika Visser',
+  jobTitle: 'John Doe',
+  name: 'John Doe',
   timezone: 'GTM-7'
 };
 
@@ -46,13 +46,13 @@ export const AccountProfile = () => (
           color="text.secondary"
           variant="body2"
         >
-          {user.city} {user.country}
+          {/* {user.city} {user.country} */}
         </Typography>
         <Typography
           color="text.secondary"
           variant="body2"
         >
-          {user.timezone}
+          {/* {user.timezone} */}
         </Typography>
       </Box>
     </CardContent>
@@ -62,7 +62,7 @@ export const AccountProfile = () => (
         fullWidth
         variant="text"
       >
-        Upload picture
+        Upload image of the hotel room
       </Button>
     </CardActions>
   </Card>

@@ -32,12 +32,13 @@ const states = [
 
 export const AccountProfileDetails = () => {
   const [values, setValues] = useState({
-    firstName: 'Anika',
-    lastName: 'Visser',
-    email: 'demo@devias.io',
+    CaseNumber: '1234',
+    reportingOfficer: 'John Doe',
+    caseDes: '',
     phone: '',
-    state: 'los-angeles',
+    state: 'San Jose',
     country: 'USA'
+
   });
 
   const handleChange = useCallback(
@@ -80,12 +81,12 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  helperText="Please specify the first name"
-                  label="First name"
-                  name="firstName"
+                  helperText="Please specify the Case Number"
+                  label="CaseNumber"
+                  name="CaseNumber"
                   onChange={handleChange}
                   required
-                  value={values.firstName}
+                  value={values.CaseNumber}
                 />
               </Grid>
               <Grid
@@ -94,11 +95,11 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Last name"
-                  name="lastName"
+                  label="Reporting Officer"
+                  name="reportingOfficer"
                   onChange={handleChange}
                   required
-                  value={values.lastName}
+                  value={values.reportingOfficer}
                 />
               </Grid>
               <Grid
@@ -107,11 +108,11 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Email Address"
-                  name="email"
+                  label="Case Description"
+                  name="caseDes"
                   onChange={handleChange}
                   required
-                  value={values.email}
+                  value={values.caseDes}
                 />
               </Grid>
               <Grid
