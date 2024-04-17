@@ -1,47 +1,42 @@
 {
-  "name": "material-kit-react",
-  "version": "3.0.0",
-  "author": "Devias",
-  "licence": "MIT",
-  "homepage": "https://devias.io",
-  "private": false,
-  "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start",
-    "export": "next export",
-    "lint": "next lint",
-    "lint-fix": "next lint --fix"
-  },
+  "name": "human-traf",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "@emotion/cache": "11.11.0",
-    "@emotion/react": "11.11.1",
-    "@emotion/server": "11.11.0",
-    "@emotion/styled": "11.11.0",
-    "@heroicons/react": "2.0.18",
-    "@mui/lab": "5.0.0-alpha.155",
-    "@mui/material": "5.14.20",
-    "@mui/system": "5.14.20",
-    "@mui/x-date-pickers": "6.18.4",
-    "apexcharts": "3.44.2",
-    "date-fns": "2.30.0",
-    "formik": "2.4.5",
-    "next": "14.0.4",
-    "nprogress": "0.2.0",
-    "prop-types": "15.8.1",
-    "react": "18.2.0",
-    "react-apexcharts": "1.4.1",
-    "react-dom": "18.2.0",
-    "simplebar-react": "^3.2.4",
-    "yup": "1.3.2"
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "d3": "^7.8.5",
+    "firebase": "^10.8.1",
+    "i": "^0.3.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.1",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
-  "devDependencies": {
-    "@types/node": "20.10.4",
-    "@types/nprogress": "0.2.3",
-    "@types/numeral": "2.0.5",
-    "@types/react": "18.2.43",
-    "@types/react-dom": "18.2.17",
-    "eslint": "8.55.0",
-    "eslint-config-next": "14.0.4"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

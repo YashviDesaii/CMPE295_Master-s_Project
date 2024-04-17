@@ -1,0 +1,73 @@
+/* Dashboard.css */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+  }
+  
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .header {
+    background: #fff;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .header .logo {
+    font-weight: bold;
+  }
+  
+  .header nav a {
+    margin: 0 1rem;
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .welcome-banner {
+    background: #333;
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .welcome-banner h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  
+  .welcome-banner p {
+    margin: 1rem 0;
+  }
+  
+  .welcome-banner .actions {
+    /* Add styles for your action buttons */
+  }
+  
+  .content {
+    padding: 2rem;
+    background: #e9e9e9;
+    flex: 1;
+  }
+  
+  /* You will need to define styles for CaseMetrics, RecentUpdates, FeaturedTools, etc. */
+  /* Each of these sections will need to have its own layout and styling based on your wireframe. */
+  
+  .footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  /* Continue with the rest of your styles... */
+  
+  /* Remember that for actual functionality like the map and data display, you will need to integrate with APIs or services to fetch and display this data dynamically. */
+  

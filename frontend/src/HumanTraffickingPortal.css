@@ -1,0 +1,78 @@
+.portal-container {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .portal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f3f3f3;
+  }
+  
+  .portal-header h1 {
+    margin: 0;
+  }
+  
+  .portal-header nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+  }
+  
+  .portal-header nav ul li {
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  
+  .search-section {
+    padding: 20px;
+  }
+  
+  .search-section h2 {
+    margin: 0 0 10px 0;
+  }
+  
+  .search-section input {
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .search-section button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .cases-summary {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .cases-summary h3 {
+    margin: 0;
+  }
+  
+  .cases-summary .region-summary > div {
+    margin-top: 10px;
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .map-view {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #f3f3f3;
+  }
+  

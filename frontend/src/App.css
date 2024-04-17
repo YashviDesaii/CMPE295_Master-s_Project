@@ -1,0 +1,95 @@
+.app {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background: #f0f0f0;
+  padding: 10px 0;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+}
+
+.nav-list li {
+  display: inline;
+  margin-right: 20px;
+}
+
+.nav-list li a {
+  text-decoration: none;
+  color: black;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hotel-info, .related-cases {
+  width: 100%;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.hotel-details, .hotel-images {
+  margin-bottom: 20px;
+}
+
+.detail-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.detail {
+  margin: 10px;
+  flex-basis: 48%;
+}
+
+.detail label {
+  font-weight: bold;
+}
+
+.value {
+  border: 1px solid #ccc;
+  padding: 5px;
+  display: block; /* Change to block to allow for width to take effect */
+  width: 100%; /* Set to full width of the container */
+}
+
+.images-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.hotel-images img {
+  width: 30%; /* Adjust the width as necessary */
+  margin-right: 2%; /* Provide some space between images */
+}
+
+.cases-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.case {
+  border: 1px solid #ccc;
+  padding: 10px;
+  flex-basis: 30%; /* Adjust the width as necessary */
+  margin-right: 2%; /* Provide some space between cases */
+}
+
+.footer {
+  background: #f0f0f0;
+  text-align: center;
+  padding: 10px 0;
+}

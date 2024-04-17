@@ -1,0 +1,44 @@
+.hotel-match {
+    font-family: Arial, sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f0f0f0;
+  }
+  
+  .navigation a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: black;
+  }
+  
+  .content {
+    padding: 20px;
+  }
+  
+  .hotel-room-image h2, .matched-hotels h2, .your-cases h2 {
+    margin-bottom: 10px;
+  }
+  
+  .image-placeholder {
+    width: 100%;
+    height: 200px; /* Adjust as needed */
+    background-color: #ddd; /* Placeholder color */
+    margin-bottom: 20px;
+  }
+  
+  .hotel-list .hotel, .cases-list .case {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+  }
+  
