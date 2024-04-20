@@ -4,6 +4,7 @@ import './PoliceReport.css';
 import { collection, addDoc } from "firebase/firestore"; 
 import { db, storage } from './firebase';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useNavigate } from 'react-router-dom';
 
 const PoliceReportForm = () => {
   const [formState, setFormState] = useState({
@@ -13,6 +14,8 @@ const PoliceReportForm = () => {
     caseDescription: '',
     image: null,
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -53,7 +56,6 @@ const PoliceReportForm = () => {
         imageUrl: imageUrl
       });
   
-      alert('Report submitted 👍');
   
       // Make a POST request with the data to the Flask backend
       const response = await axios.post('http://127.0.0.1:5000/predict', {
@@ -67,7 +69,7 @@ const PoliceReportForm = () => {
       if (response.data) {
         // Handle the response data as needed
         console.log('Prediction from server:', response.data);
-        alert('Prediction received: ' + response.data);
+        navigate('/hotel-match', { state: { predictionData: response.data } });
         //alert('Prediction received: ' + response.data.label);
 
       }
