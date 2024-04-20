@@ -55,7 +55,24 @@ const PoliceReportForm = () => {
   
       alert('Report submitted 👍');
   
-      // Reset form state if needed
+      // Make a POST request with the data to the Flask backend
+      const response = await axios.post('http://127.0.0.1:5000/predict', {
+        caseNumber: formState.caseNumber,
+        reportingOfficer: formState.reportingOfficer,
+        departmentLocation: formState.departmentLocation,
+        caseDescription: formState.caseDescription,
+        imageUrl: imageUrl
+      });
+
+      if (response.data) {
+        // Handle the response data as needed
+        console.log('Prediction from server:', response.data);
+        alert('Prediction received: ' + response.data);
+        //alert('Prediction received: ' + response.data.label);
+
+      }
+  
+      // Reset form state after submission
       setFormState({
         caseNumber: '',
         reportingOfficer: '',
@@ -63,18 +80,9 @@ const PoliceReportForm = () => {
         caseDescription: '',
         image: null,
       });
-
-      // Make a POST request with the data
-      await axios.post('http://127.0.0.1:5000/predict_label', {
-        caseNumber: formState.caseNumber,
-        reportingOfficer: formState.reportingOfficer,
-        departmentLocation: formState.departmentLocation,
-        caseDescription: formState.caseDescription,
-        imageUrl: imageUrl
-      });
   
     } catch (error) {
-      console.error('Error adding document: ', error);
+      console.error('Error submitting report: ', error);
       alert(error.message);
     }
   };
