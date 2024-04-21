@@ -1,17 +1,12 @@
 import React from 'react';
 import './Hotel.css';
+import NavigationMenu from './Navbar';
 
 function Hotel() {
   return (
     <div className="hotel">
       <header className="header">
-        <nav className="nav">
-          <ul className="nav-list">
-            <li><a href="/">Home</a></li>
-            <li><a href="/hotels">Hotels</a></li>
-            <li><a href="/cases">Cases</a></li>
-          </ul>
-        </nav>
+        <NavigationMenu/>
       </header>
       <main className="main-content">
         <section className="hotel-info">

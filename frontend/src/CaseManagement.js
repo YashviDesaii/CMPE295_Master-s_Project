@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import PoliceReportForm from './PoliceReport';
+import './CaseManagement.css';
+import NavigationMenu from './Navbar';
 
 const CaseManagement = () => {
   const [cases, setCases] = useState([
@@ -44,15 +47,18 @@ const CaseManagement = () => {
   };
 
   return (
-    <div>
-      <h1>Case Management</h1>
-      <div>
+
+    <div className="case-management-container">
+      <header className="header">
+        <NavigationMenu/>
+      </header>
+      <h1>Manage Your Cases</h1>
+      <div className="cases-section">
         <h2>My Cases</h2>
-        <button onClick={() => setActiveCase(null)}>Create New Case</button>
-        <div>
+        <div className="active-cases">
           <h3>Active Cases</h3>
           {cases.map((caseData) => (
-            <div key={caseData.id} onClick={() => handleCaseSelect(caseData)}>
+            <div key={caseData.id} onClick={() => handleCaseSelect(caseData)} className="case-item">
               {caseData.name} - {caseData.location}
             </div>
           ))}
@@ -60,7 +66,7 @@ const CaseManagement = () => {
       </div>
 
       {activeCase ? (
-        <div>
+        <div className="case-details">
           <h2>Case Details</h2>
           <p>Case Number: {activeCase.id}</p>
           <p>Status: {activeCase.status}</p>
@@ -68,33 +74,13 @@ const CaseManagement = () => {
           <p>Victims Count: {activeCase.victimsCount}</p>
           <p>Investigating Officer: {activeCase.officer}</p>
         </div>
-       ) 
-       : (
-    //     <form onSubmit={handleFormSubmit}>
-    //       <h2>New Police Report</h2>
-    //       <label>
-    //         Case Number:
-    //         <input type="text" name="caseNumber" value={caseForm.caseNumber} onChange={handleFormChange} />
-    //       </label>
-    //       <label>
-    //         Reporting Officer:
-    //         <input type="text" name="reportingOfficer" value={caseForm.reportingOfficer} onChange={handleFormChange} />
-    //       </label>
-    //       <label>
-    //         Police Department Location:
-    //         <input type="text" name="location" value={caseForm.location} onChange={handleFormChange} />
-    //       </label>
-    //       <label>
-    //         Case Description:
-    //         <textarea name="caseDescription" value={caseForm.caseDescription} onChange={handleFormChange} />
-    //       </label>
-    //       {/* Here you'd add your image upload functionality */}
-    //       <button type="submit">Submit</button>
-    //     </form>
-    <PoliceReportForm/>
-       )}
+      ) : (
+        <Link to="/police-report">
+          <button className= "casebutton" onClick={() => setActiveCase(null)}>Create New Case</button>
+        </Link>
+      )}
     </div>
   );
-};
+}
 
 export default CaseManagement;

@@ -1,95 +1,45 @@
-.app {
-  font-family: Arial, sans-serif;
+.hamburger-menu {
+  display: flex;
+  align-items: center;
+}
+
+.menu-icon {
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-}
-
-.header {
-  background: #f0f0f0;
-  padding: 10px 0;
-}
-
-.nav-list {
-  list-style: none;
-  padding: 0;
-  text-align: center;
-}
-
-.nav-list li {
-  display: inline;
-  margin-right: 20px;
-}
-
-.nav-list li a {
-  text-decoration: none;
-  color: black;
-}
-
-.main-content {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.hotel-info, .related-cases {
-  width: 100%;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-  padding: 20px;
-}
-
-.hotel-details, .hotel-images {
-  margin-bottom: 20px;
-}
-
-.detail-group {
-  display: flex;
   justify-content: space-between;
-}
-
-.detail {
-  margin: 10px;
-  flex-basis: 48%;
-}
-
-.detail label {
-  font-weight: bold;
-}
-
-.value {
-  border: 1px solid #ccc;
+  width: 30px;
+  height: 20px;
   padding: 5px;
-  display: block; /* Change to block to allow for width to take effect */
-  width: 100%; /* Set to full width of the container */
 }
 
-.images-group {
-  display: flex;
-  justify-content: space-between;
+.bar {
+  width: 100%;
+  height: 3px;
+  background-color: black;
+  transition: all 0.3s ease;
 }
 
-.hotel-images img {
-  width: 30%; /* Adjust the width as necessary */
-  margin-right: 2%; /* Provide some space between images */
+.open .bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
 }
 
-.cases-group {
-  display: flex;
-  justify-content: space-between;
+.open .bar:nth-child(2) {
+  opacity: 0;
 }
 
-.case {
-  border: 1px solid #ccc;
-  padding: 10px;
-  flex-basis: 30%; /* Adjust the width as necessary */
-  margin-right: 2%; /* Provide some space between cases */
+.open .bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
-.footer {
-  background: #f0f0f0;
-  text-align: center;
-  padding: 10px 0;
+.menu-links {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.open .menu-links {
+  display: block;
 }

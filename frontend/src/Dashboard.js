@@ -1,5 +1,7 @@
 import React from 'react';
 import './Dashboard.css'; // Make sure to create a corresponding CSS file
+import NavigationMenu from './Navbar'; 
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   return (
@@ -24,13 +26,8 @@ const Dashboard = () => {
 const Header = () => {
   return (
     <header className="header">
-      <div className="logo">Human Trafficking Portal</div>
-      <nav>
-        <a href="#dashboard">Dashboard</a>
-        <a href="#cases">Cases</a>
-        <a href="#reports">Reports</a>
-        <a href="#maps">Maps</a>
-      </nav>
+      <NavigationMenu/>
+      <div className="logo">Law Enforcement Portal</div>
     </header>
   );
 };
@@ -38,11 +35,15 @@ const Header = () => {
 const WelcomeBanner = () => {
   return (
     <section className="welcome-banner">
-      <h1>Welcome to the Human Trafficking Portal</h1>
-      <p>Track and manage human trafficking effectively</p>
+      <h1>Combat Human Trafficking</h1>
+      <p>If you see something, say something. Prevent Human Trafficking</p>
       <div className="actions">
-        <button>View All Cases</button>
+        <Link to="/case-management">
+          <button>View Your Cases</button>
+        </Link>
+        <Link to="police-report">
         <button>Create Case</button>
+        </Link>
       </div>
     </section>
   );

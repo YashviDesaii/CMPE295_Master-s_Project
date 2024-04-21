@@ -1,21 +1,13 @@
 import React from 'react';
 import './HumanTraffickingPortal.css'; // Ensure the CSS file is named accordingly
+import NavigationMenu from './Navbar';
 
 const HumanTraffickingPortal = () => {
   return (
     <div className="portal-container">
-      <header className="portal-header">
-        <h1>Human Trafficking Portal</h1>
-        <nav>
-          <ul>
-            <li>Home</li>
-            <li>Cases</li>
-            <li>Reports</li>
-            <li>Maps</li>
-          </ul>
-        </nav>
+      <header className="header">
+        <NavigationMenu/>
       </header>
-
       <div className="search-section">
         <h2>Human Trafficking Cases Map</h2>
         <input type="text" placeholder="Search Location" />

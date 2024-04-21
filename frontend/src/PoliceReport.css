@@ -11,23 +11,6 @@ body {
     text-align: center;
   }
   
-  /* Style the navigation bar */
-  nav {
-    background-color: #f2f2f2;
-    padding: 10px;
-    text-align: center;
-  }
-  
-  nav a {
-    text-decoration: none;
-    color: #333;
-    padding: 0 15px;
-  }
-  
-  nav a:hover {
-    text-decoration: underline;
-  }
-  
   /* Style the main content area */
   main {
     padding: 20px;

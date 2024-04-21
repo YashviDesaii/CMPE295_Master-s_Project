@@ -5,6 +5,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { db, storage } from './firebase';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from 'react-router-dom';
+import NavigationMenu from './Navbar';
 
 const PoliceReportForm = () => {
   const [formState, setFormState] = useState({
@@ -91,8 +92,10 @@ const PoliceReportForm = () => {
   
   return (
     <div className="police-reporting">
-      <h1>New Police Report</h1>
-      <p>Please fill in the following details</p>
+      <header className="header">
+        <NavigationMenu/>
+      </header>
+      <h1 style={{ textAlign: 'center' }}>New Police Report</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="caseNumber">Case Number</label>
