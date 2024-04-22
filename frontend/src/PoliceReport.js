@@ -13,6 +13,7 @@ const PoliceReportForm = () => {
     reportingOfficer: '',
     departmentLocation: '',
     caseDescription: '',
+    victimCount: '',
     image: null,
   });
 
@@ -54,6 +55,7 @@ const PoliceReportForm = () => {
         reportingOfficer: formState.reportingOfficer,
         departmentLocation: formState.departmentLocation,
         caseDescription: formState.caseDescription,
+        victimCount: formState.victimCount,
         imageUrl: imageUrl
       });
   
@@ -64,6 +66,7 @@ const PoliceReportForm = () => {
         reportingOfficer: formState.reportingOfficer,
         departmentLocation: formState.departmentLocation,
         caseDescription: formState.caseDescription,
+        victimCount: formState.victimCount,
         imageUrl: imageUrl
       });
 
@@ -81,6 +84,7 @@ const PoliceReportForm = () => {
         reportingOfficer: '',
         departmentLocation: '',
         caseDescription: '',
+        victimCount:'',
         image: null,
       });
   
@@ -143,9 +147,19 @@ const PoliceReportForm = () => {
             required
           />
         </div>
-  
+
         <div className="form-group">
-          <label htmlFor="image">Image (optional)</label>
+          <label htmlFor="victimCount">Victim Count</label>
+          <input
+            id="victimCount"
+            name="victimCount"
+            value={formState.victimCount}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="image">Image</label>
           <input
             type="file"
             id="image"
