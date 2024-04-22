@@ -12,6 +12,8 @@ import CaseManagement from './CaseManagement';
 import HumanTraffickingPortal from './HumanTraffickingPortal';
 import Dashboard from './Dashboard';
 import './App.css'
+import SignIn from './SignIn';
+import SignUp from './SignUp';
 
 function App() {
 
@@ -31,7 +33,9 @@ function App() {
           <Route path="/police-report" element={<PoliceReportForm />} />
           <Route path="/case-management" element={<CaseManagement />} />
           <Route path="/map-view" element={<HumanTraffickingPortal />} />
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/home" element={<Dashboard />} />
+          <Route path="/" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
         </Routes>
       </div>
     </Router>
