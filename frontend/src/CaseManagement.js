@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import PoliceReportForm from './PoliceReport';
 import './CaseManagement.css';
 import NavigationMenu from './Navbar';
+import ActiveCases from './ActiveCases';
+import CaseDetailsList from './CaseDetailsList';
 
 const CaseManagement = () => {
   const [cases, setCases] = useState([
@@ -18,8 +20,22 @@ const CaseManagement = () => {
     // Assuming image would be handled separately with file upload functionality
   });
 
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    // Optionally, you can also filter the cases here based on the search term
+  };
+
   const handleCaseSelect = (caseData) => {
     setActiveCase(caseData);
+  };
+
+  const handleNewCaseClick = () => {
+    // Toggle visibility of PoliceReportForm
+    setShowReportForm(true);
+    setActiveCase(null); // Reset active case when creating new one
   };
 
   const handleFormChange = (e) => {
@@ -53,34 +69,38 @@ const CaseManagement = () => {
         <NavigationMenu/>
       </header>
       <h1>Manage Your Cases</h1>
-      <div className="cases-section">
-        <h2>My Cases</h2>
-        <div className="active-cases">
-          <h3>Active Cases</h3>
-          {cases.map((caseData) => (
-            <div key={caseData.id} onClick={() => handleCaseSelect(caseData)} className="case-item">
-              {caseData.name} - {caseData.location}
-            </div>
-          ))}
-        </div>
+
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-bar"
+          placeholder="Search cases..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
       </div>
 
-      {activeCase ? (
-        <div className="case-details">
-          <h2>Case Details</h2>
-          <p>Case Number: {activeCase.id}</p>
-          <p>Status: {activeCase.status}</p>
-          <p>Hotel: {activeCase.location}</p>
-          <p>Victims Count: {activeCase.victimsCount}</p>
-          <p>Investigating Officer: {activeCase.officer}</p>
-        </div>
-      ) : (
-        <Link to="/police-report">
+      <div className="controls">
+      <Link to="/police-report">
           <button className= "casebutton" onClick={() => setActiveCase(null)}>Create New Case</button>
         </Link>
+        {/* Include additional filters/search here if needed */}
+      </div>
+      {showReportForm ? (
+        <PoliceReportForm onSubmit={handleFormSubmit} />
+      ) : (
+        <>      
+<ActiveCases/>
+<CaseDetailsList cases={cases} /> {/* Add this line */}
+
+</>
       )}
     </div>
+
   );
+
 }
+
+
 
 export default CaseManagement;

@@ -41,7 +41,7 @@ const WelcomeBanner = () => {
         <Link to="/case-management">
           <button>View Your Cases</button>
         </Link>
-        <Link to="police-report">
+        <Link to="/police-report">
         <button>Create Case</button>
         </Link>
       </div>
