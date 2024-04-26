@@ -3,6 +3,7 @@ import './HotelMatch.css';
 import { db } from './firebase'; // Make sure this path is correct
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom'; 
+import NavigationMenu from './Navbar';
 
   function HotelMatch() {
     const [hotelData, setHotelData] = useState(null);
@@ -40,11 +41,7 @@ import { useLocation } from 'react-router-dom';
   return (
     <div className="hotel-match">
       <header className="header">
-        <div className="title">Law Enforcement Portal</div>
-        <nav className="navigation">
-          <a href="/home">Home</a>
-          <a href="/cases">Cases</a>
-        </nav>
+        <NavigationMenu/>
       </header>
 
       <main className="content">
@@ -60,10 +57,6 @@ import { useLocation } from 'react-router-dom';
           <div>Loading hotel details...</div>
         )}
       </main>
-
-      <footer className="footer">
-        © 2022 Law Enforcement Portal. All rights reserved.
-      </footer>
     </div>
   );
 }

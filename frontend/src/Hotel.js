@@ -43,9 +43,6 @@ function Hotel() {
           </div>
         </section>
       </main>
-      <footer className="footer">
-        © 2021 Law Enforcement Portal. All rights reserved.
-      </footer>
     </div>
   );
 }
