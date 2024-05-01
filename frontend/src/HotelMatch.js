@@ -48,7 +48,7 @@ import NavigationMenu from './Navbar';
         {hotelData ? (
           <section className="hotel-room-image">
             <h2>Hotel Details</h2>
-            <img src={hotelData.image1} alt={hotelData.name} className="image-placeholder" />
+            {/* <img src={hotelData.image1} alt={hotelData.name} className="image-placeholder" /> */}
             <div><strong>Name:</strong> {hotelData.name}</div>
             <div><strong>Location:</strong> {hotelData.location}</div>
             <div><strong>Number of Cases:</strong> {hotelData.numberOfCases}</div>
