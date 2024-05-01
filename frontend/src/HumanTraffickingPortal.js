@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './HumanTraffickingPortal.css'; // Ensure the CSS file is named accordingly
+import './HumanTraffickingPortal.css'; 
 import NavigationMenu from './Navbar';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -11,11 +11,21 @@ const HeatmapLayer = ({ incidents }) => {
 
   useEffect(() => {
     if (incidents.length > 0) {
-      const points = incidents.map(incident => [parseFloat(incident.latitude), parseFloat(incident.longitude), 1]); // 1 is the intensity
+      const validIncidents = incidents.filter(incident => {
+        const lat = parseFloat(incident.latitude);
+        const lng = parseFloat(incident.longitude);
+        const isValidLat = !isNaN(lat) && lat !== null;
+        const isValidLng = !isNaN(lng) && lng !== null;
+        if (!isValidLat || !isValidLng) {
+          console.error('Invalid coordinates:', incident);
+        }
+        return isValidLat && isValidLng;
+      });
+
+      const points = validIncidents.map(incident => [incident.latitude, incident.longitude, 1]); 
       const heat = L.heatLayer(points, { radius: 25 }).addTo(map);
-      return () => {
-        map.removeLayer(heat);
-      };
+
+      return () => map.removeLayer(heat);
     }
   }, [incidents, map]);
 
@@ -28,14 +38,19 @@ const HumanTraffickingPortal = () => {
   useEffect(() => {
     fetch('https://data.seattle.gov/resource/kzjm-xkqj.json')
       .then(response => response.json())
-      .then(data => setIncidents(data))
-      .catch(error => console.log('Error fetching data:', error));
+      .then(data => {
+        const validData = data.filter(item => item.latitude && item.longitude);
+        setIncidents(validData);
+      })
+      .catch(error => {
+        console.log('Error fetching data:', error);
+      });
   }, []);
 
   return (
     <div className="portal-container">
       <header className="header">
-        <NavigationMenu/>
+        <NavigationMenu />
       </header>
       <div className="search-section">
         <h2>Human Trafficking Cases Map</h2>
@@ -46,11 +61,6 @@ const HumanTraffickingPortal = () => {
       <div className="cases-summary">
         <h3>Cases Summary</h3>
         <p>Total Cases: {incidents.length}</p>
-        {/* <div className="region-summary">
-          <div>Region A Count: 50 Lorem ipsum...</div>
-          <div>Region B Count: 30 Nunc laoreet...</div>
-          <div>Region C Count: 45 Curabitur tempus...</div>
-        </div> */}
       </div>
 
       <div className="map-view">
