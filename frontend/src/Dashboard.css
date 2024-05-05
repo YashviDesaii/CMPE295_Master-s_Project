@@ -78,5 +78,20 @@ body {
     max-width: 600px; 
     max-height: 450px; 
   }
+  .chart-section {
+    margin: 20px auto; /* Center the chart and add vertical spacing */
+    padding: 15px;
+    max-width: 800px; /* Max width for each chart */
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+  }
+  
+  .chart-container {
+    display: flex;
+    flex-direction: column; /* Stack charts vertically */
+    align-items: center; /* Center charts horizontally */
+    gap: 20px; /* Space between each chart */
+  }
   
   
