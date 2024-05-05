@@ -66,8 +66,17 @@ body {
     text-align: center;
     padding: 1rem;
   }
+
+  .chart-container {
+    padding-top: 0%;
+    display: flex;
+    justify-content: center;
+    /* height: 150vh;  */
+  }
   
-  /* Continue with the rest of your styles... */
+  .chart-container canvas {
+    max-width: 600px; 
+    max-height: 450px; 
+  }
   
-  /* Remember that for actual functionality like the map and data display, you will need to integrate with APIs or services to fetch and display this data dynamically. */
   
