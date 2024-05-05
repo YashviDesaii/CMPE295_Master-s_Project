@@ -8,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import NavigationMenu from './Navbar';
 
 const PoliceReportForm = () => {
+  var caseNumber = 0
+  var caseDate = ''
   const [formState, setFormState] = useState({
-    caseNumber: '',
+    // caseNumber: '',
     reportingOfficer: '',
     departmentLocation: '',
     caseDescription: '',
@@ -51,7 +53,8 @@ const PoliceReportForm = () => {
 
     try {
       const docRef = await addDoc(collection(db, "policeReports"), {
-        caseNumber: formState.caseNumber,
+        caseNumber: Math.floor(Math.random() * 10000),
+        caseDate: new Date().toLocaleDateString(),
         reportingOfficer: formState.reportingOfficer,
         departmentLocation: formState.departmentLocation,
         caseDescription: formState.caseDescription,
@@ -59,10 +62,10 @@ const PoliceReportForm = () => {
         imageUrl: imageUrl
       });
   
-  
+
       // Make a POST request with the data to the Flask backend
       const response = await axios.post('http://127.0.0.1:5000/predict', {
-        caseNumber: formState.caseNumber,
+        caseNumber: caseNumber,
         reportingOfficer: formState.reportingOfficer,
         departmentLocation: formState.departmentLocation,
         caseDescription: formState.caseDescription,
@@ -80,7 +83,7 @@ const PoliceReportForm = () => {
   
       // Reset form state after submission
       setFormState({
-        caseNumber: '',
+        // caseNumber: '',
         reportingOfficer: '',
         departmentLocation: '',
         caseDescription: '',
@@ -101,7 +104,7 @@ const PoliceReportForm = () => {
       </header>
       <h1 style={{ textAlign: 'center' }}>New Police Report</h1>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="caseNumber">Case Number</label>
           <input
             type="text"
@@ -111,7 +114,7 @@ const PoliceReportForm = () => {
             onChange={handleInputChange}
             required
           />
-        </div>
+        </div> */}
   
         <div className="form-group">
           <label htmlFor="reportingOfficer">Reporting Officer</label>
