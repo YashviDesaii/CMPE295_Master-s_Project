@@ -5,6 +5,63 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
+import { db } from './firebase';
+import { collection, getDocs } from 'firebase/firestore';
+
+const getCoordinatesForDepartment = async (location) => {
+  const apiKey = "f6782bf05ee54eea97bb14784b4d76de";
+  const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(location)}&apiKey=${apiKey}`;
+  try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.features && data.features.length > 0) {
+          const { lat, lon } = data.features[0].properties;
+          return { lat, lng: lon };
+      }
+      return null;
+  } catch (error) {
+      console.error('Failed to fetch coordinates:', error);
+      return null;
+  }
+};
+
+// Component to show department locations as markers
+const DepartmentLocationLayer = ({ departments }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const fetchCoordinatesAndSetMarkers = async () => {
+        const promises = departments.map(async department => {
+            const coords = await getCoordinatesForDepartment(department.name);
+            if (coords) {
+                L.marker([coords.lat, coords.lng], {
+                    icon: L.icon({
+                        iconUrl: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    })
+                }).addTo(map)
+                  .bindPopup(`Department: ${department.name}`);
+            }
+        });
+
+        await Promise.all(promises);
+
+        return () => {
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+        };
+    };
+
+    fetchCoordinatesAndSetMarkers();
+}, [departments, map]);
+
+return null;
+};
 
 const HeatmapLayer = ({ incidents }) => {
   const map = useMap();
@@ -14,12 +71,7 @@ const HeatmapLayer = ({ incidents }) => {
       const validIncidents = incidents.filter(incident => {
         const lat = parseFloat(incident.latitude);
         const lng = parseFloat(incident.longitude);
-        const isValidLat = !isNaN(lat) && lat !== null;
-        const isValidLng = !isNaN(lng) && lng !== null;
-        if (!isValidLat || !isValidLng) {
-          console.error('Invalid coordinates:', incident);
-        }
-        return isValidLat && isValidLng;
+        return !isNaN(lat) && lat !== null && !isNaN(lng) && lng !== null;
       });
 
       const points = validIncidents.map(incident => [incident.latitude, incident.longitude, 1]); 
@@ -34,6 +86,7 @@ const HeatmapLayer = ({ incidents }) => {
 
 const HumanTraffickingPortal = () => {
   const [incidents, setIncidents] = useState([]);
+  const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     fetch('https://data.seattle.gov/resource/kzjm-xkqj.json')
@@ -45,6 +98,16 @@ const HumanTraffickingPortal = () => {
       .catch(error => {
         console.log('Error fetching data:', error);
       });
+      const fetchDepartments = async () => {
+        const querySnapshot = await getDocs(collection(db, 'policeReports'));
+        const departmentData = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return { name: data.departmentLocation };
+        });
+        setDepartments(departmentData);
+      };
+  
+      fetchDepartments();
   }, []);
 
   return (
@@ -69,6 +132,7 @@ const HumanTraffickingPortal = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <HeatmapLayer incidents={incidents} />
+          <DepartmentLocationLayer departments={departments} />
         </MapContainer>
       </div>
       
