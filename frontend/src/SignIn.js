@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import './SignIn.css'; // Import the CSS file for styling
-import { db } from './firebase';  // Ensure this is correctly pointing to your Firebase config
+import './SignIn.css'; 
+import { db } from './firebase'; 
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 function SignIn() {
@@ -12,14 +12,13 @@ function SignIn() {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    const usersRef = collection(db, 'user');  // Ensure 'users' is the correct collection name
+    const usersRef = collection(db, 'user'); 
     const q = query(usersRef, where("username", "==", username));
 
     try {
       const querySnapshot = await getDocs(q);
       let userFound = false;
       querySnapshot.forEach((doc) => {
-        // Ensure password field matches exactly what's in Firestore
         if (doc.data().password === password) {
           console.log('Login successful:', doc.data());
           setLoggedIn(true);
@@ -27,7 +26,7 @@ function SignIn() {
         }
       });
       if (!userFound) {
-        setError('Invalid username or password');  // Ensures this message only sets if no users found
+        setError('Invalid username or password'); 
       }
     } catch (error) {
       console.error('Login failed:', error);

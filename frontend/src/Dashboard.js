@@ -80,7 +80,7 @@ const Dashboard = () => {
     },
     responsive: true,
     maintainAspectRatio: true,
-    aspectRatio: 2, // Adjust aspect ratio to make the chart less tall
+    aspectRatio: 2, 
   };
 
   const barChartOptions = {
@@ -96,7 +96,7 @@ const Dashboard = () => {
     },
     responsive: true,
     maintainAspectRatio: true,
-    aspectRatio: 2, // Adjust aspect ratio to make the chart less tall
+    aspectRatio: 2, 
   };
 
   const barChartData = {
