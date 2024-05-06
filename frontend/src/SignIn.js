@@ -1,23 +1,41 @@
 import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import './SignIn.css'; // Import the CSS file for styling
+import { db } from './firebase';  // Ensure this is correctly pointing to your Firebase config
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    // Here, you would typically handle authentication, such as sending a request to a backend API
-    // For simplicity, this example just logs the username and password to the console
-    console.log('Username:', username);
-    console.log('Password:', password);
-    setLoggedIn(true); // Simulating successful login
+    const usersRef = collection(db, 'user');  // Ensure 'users' is the correct collection name
+    const q = query(usersRef, where("username", "==", username));
+
+    try {
+      const querySnapshot = await getDocs(q);
+      let userFound = false;
+      querySnapshot.forEach((doc) => {
+        // Ensure password field matches exactly what's in Firestore
+        if (doc.data().password === password) {
+          console.log('Login successful:', doc.data());
+          setLoggedIn(true);
+          userFound = true;
+        }
+      });
+      if (!userFound) {
+        setError('Invalid username or password');  // Ensures this message only sets if no users found
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      setError('Login failed. Please check your credentials.');
+    }
   };
 
   if (loggedIn) {
-    // Redirect to a different page after successful login
     return <Navigate to="/home" />;
   }
 
@@ -46,6 +64,7 @@ function SignIn() {
           required
           className="input-field"
         />
+        {error && <p className="error">{error}</p>}
         <br />
         <button type="submit" className="submit-button">Sign In</button>
       </form>
