@@ -5,12 +5,15 @@ import torch
 import torch.nn as nn
 import pandas as pd
 import os
-from torchvision import transforms
+from torchvision import models, transforms
 from efficientnet_pytorch import EfficientNet
 from PIL import Image
 from io import BytesIO
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import numpy as np
+import random
+
 
 app = Flask(__name__)
 CORS(app)
@@ -27,6 +30,17 @@ app.register_blueprint(HotelInformation.HotelInformation)
 app.register_blueprint(CrimeMapping.CrimeMapping)
 app.register_blueprint(StatisticsDashboard.StatisticsDashboard)
 
+def set_seeds(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+'''
+
+
 # Model and transformations setup
 num_classes = 3116
 data_transform = transforms.Compose([
@@ -35,7 +49,7 @@ data_transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-best_checkpoint_path = "abc.pth"
+best_checkpoint_path = "checkpoint_epoch_20.pth"
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 best_model = EfficientNet.from_pretrained('efficientnet-b4')
@@ -74,6 +88,78 @@ def predict():
             return jsonify({"predicted_label": predicted_label})
         except Exception as e:
             # Return a JSON response with the error message
+            return jsonify({"error": str(e)})
+'''
+# Device configuration
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Load the class names
+df1 = pd.read_csv('updated_hotel_to_imagecount_mapping.csv')
+class_names = df1['hotel_id'].tolist()
+
+# Define or import the set_seeds function
+def set_seeds(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+set_seeds()
+
+# Set up the Vision Transformer model
+pretrained_vit = models.vit_b_16(weights=models.ViT_B_16_Weights.DEFAULT).to(device)
+pretrained_vit.heads = nn.Linear(in_features=768, out_features=len(class_names)).to(device)
+for parameter in pretrained_vit.parameters():
+    parameter.requires_grad = False
+
+# Load the model state
+vit_checkpoint_path = "checkpoint_epoch_20.pth"
+vit_state_dict = torch.load(vit_checkpoint_path, map_location=torch.device(device))['model_state_dict']
+pretrained_vit.load_state_dict(vit_state_dict)
+pretrained_vit.eval()
+
+# Transform function for image preprocessing
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+
+def predict_vit(image):
+    # Assuming `image` is already an Image object.
+    image = transform(image).unsqueeze(0)  # Add batch dimension
+    image = image.to(device)
+    with torch.no_grad():
+        output = pretrained_vit(image)
+    probabilities, indices = torch.topk(output, 5)
+    top_hotel_ids = [class_names[idx] for idx in indices[0]]
+    return top_hotel_ids
+
+
+# Flask route for ViT model predictions
+@app.route('/predict', methods=['POST'])
+def predict():
+    print("inside predict")
+    if request.method == 'POST':
+        print("inside POST")
+        try:
+            data = request.get_json()
+            print("inside try")
+            print(data)
+            image_url = data['imageUrl']
+            print(image_url)
+            response = requests.get(image_url)
+            print(response.text)
+            image = Image.open(BytesIO(response.content)).convert('RGB')
+            predicted_labels = predict_vit(image)
+
+            print(predicted_labels)
+            return jsonify({"predicted_labels": predicted_labels})
+        except Exception as e:
+            print(str(e))
             return jsonify({"error": str(e)})
 
 if __name__ == '__app__':

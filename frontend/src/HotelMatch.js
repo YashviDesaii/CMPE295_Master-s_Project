@@ -5,54 +5,53 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom'; 
 import NavigationMenu from './Navbar';
 
-  function HotelMatch() {
-    const [hotelData, setHotelData] = useState(null);
-    const [hotelId, setHotelId] = useState('21494'); // Default ID for demonstration
-    const location = useLocation(); // Use location to access navigation state
-    const predictionData = location.state?.predictionData;
-  
-    useEffect(() => {
-      if (predictionData) {
-        console.log('Received prediction data:', predictionData.predicted_label); // Log the received data
-      }
-  
-      // Existing fetchHotelData logic
-    }, [predictionData]); 
+function HotelMatch() {
+  const [hotelData, setHotelData] = useState([]);
+  const location = useLocation();
+  const predictionData = location.state?.predictionData;
 
-    useEffect(() => {
-      const fetchHotelData = async () => {
-        const hotelsCollectionRef = collection(db, "hotels");
-        const q = query(hotelsCollectionRef, where("ID", "==", predictionData.predicted_label));
-        const querySnapshot = await getDocs(q);
-  
-        if (!querySnapshot.empty) {
-          // Assuming only one hotel will match the ID
-          const fetchedHotel = querySnapshot.docs[0].data();
-          setHotelData(fetchedHotel);
-        } else {
-          console.log("No hotel found with the ID:", hotelId);
-          alert("No hotel found with the provided ID.");
-        }
-      };
-  
-      fetchHotelData();
-    }, [hotelId]); // This effect runs when hotelId changes
+  useEffect(() => {
+    console.log(location.state?.predictionData);
+    if (predictionData && Array.isArray(predictionData.predicted_labels)) {
+      console.log('Received prediction data:', predictionData.predicted_labels);
+      fetchHotelData(predictionData.predicted_labels);
+    }
+  }, [predictionData]);
+
+  const fetchHotelData = async (predictedLabels) => {
+    const hotelsCollectionRef = collection(db, "hotels");
+    const promises = predictedLabels.map(label => {
+      const q = query(hotelsCollectionRef, where("ID", "==", label));
+      return getDocs(q);
+    });
+
+    try {
+      const querySnapshots = await Promise.all(promises);
+      const fetchedHotels = querySnapshots.map(snapshot => snapshot.docs.map(doc => doc.data())).flat();
+      setHotelData(fetchedHotels.length > 0 ? fetchedHotels : null);
+    } catch (error) {
+      console.error("Error fetching hotel data:", error);
+      alert("Failed to fetch hotel details.");
+    }
+  };
 
   return (
     <div className="hotel-match">
       <header className="header">
-        <NavigationMenu/>
+        <NavigationMenu />
       </header>
-
       <main className="content">
-        {hotelData ? (
-          <section className="hotel-room-image">
-            <h2>Hotel Details</h2>
-            {/* <img src={hotelData.image1} alt={hotelData.name} className="image-placeholder" /> */}
-            <div><strong>Name:</strong> {hotelData.name}</div>
-            <div><strong>Location:</strong> {hotelData.location}</div>
-            <div><strong>Number of Cases:</strong> {hotelData.numberOfCases}</div>
-          </section>
+        {hotelData && hotelData.length > 0 ? (
+          hotelData.map((hotel, index) => (
+            <section key={index} className="hotel-room-image">
+              <h2>Hotel Details</h2>
+              {/* Uncomment and modify the next line if image data is available */}
+              {/* <img src={hotel.image1} alt={hotel.name} className="image-placeholder" /> */}
+              <div><strong>Name:</strong> {hotel.name}</div>
+              <div><strong>Location:</strong> {hotel.location}</div>
+              <div><strong>Number of Cases:</strong> {hotel.numberOfCases}</div>
+            </section>
+          ))
         ) : (
           <div>Loading hotel details...</div>
         )}

@@ -72,7 +72,7 @@ const PoliceReportForm = () => {
         victimCount: formState.victimCount,
         imageUrl: imageUrl
       });
-
+      console.log(response)
       if (response.data) {
         // Handle the response data as needed
         console.log('Prediction from server:', response.data);
