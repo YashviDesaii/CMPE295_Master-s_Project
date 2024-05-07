@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './HotelMatch.css';
-import { db } from './firebase'; // Make sure this path is correct
+import { db } from './firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom'; 
 import NavigationMenu from './Navbar';
@@ -11,24 +11,33 @@ function HotelMatch() {
   const predictionData = location.state?.predictionData;
 
   useEffect(() => {
-    console.log(location.state?.predictionData);
-    if (predictionData && Array.isArray(predictionData.predicted_labels)) {
-      console.log('Received prediction data:', predictionData.predicted_labels);
-      fetchHotelData(predictionData.predicted_labels);
+    if (predictionData && predictionData.hotelIds) {
+      console.log('Received prediction data:', predictionData);
+      fetchHotelData(predictionData);
     }
   }, [predictionData]);
-
-  const fetchHotelData = async (predictedLabels) => {
+  
+  function softmax(arr) {
+    return arr.map(value => Math.exp(value))
+               .reduce((a, b) => a + b, 0);
+  }
+  const fetchHotelData = async (predictionData) => {
+    const { hotelIds, probabilities } = predictionData;
+    const sumOfExps = softmax(probabilities);
     const hotelsCollectionRef = collection(db, "hotels");
-    const promises = predictedLabels.map(label => {
-      const q = query(hotelsCollectionRef, where("ID", "==", label));
-      return getDocs(q);
+    const promises = hotelIds.map((id, index) => {
+      const q = query(hotelsCollectionRef, where("ID", "==", id));
+      return getDocs(q).then(snapshot => {
+        // Assuming each query returns exactly one doc
+        const hotelData = snapshot.docs.map(doc => doc.data())[0];
+        const probability = (Math.exp(probabilities[index]) / sumOfExps) * 100; // softmax probability to percentage
+        return { ...hotelData, probability: probability.toFixed(2) }; // Formatting probability
+      });
     });
 
     try {
-      const querySnapshots = await Promise.all(promises);
-      const fetchedHotels = querySnapshots.map(snapshot => snapshot.docs.map(doc => doc.data())).flat();
-      setHotelData(fetchedHotels.length > 0 ? fetchedHotels : null);
+      const results = await Promise.all(promises);
+      setHotelData(results);
     } catch (error) {
       console.error("Error fetching hotel data:", error);
       alert("Failed to fetch hotel details.");
@@ -45,11 +54,9 @@ function HotelMatch() {
           hotelData.map((hotel, index) => (
             <section key={index} className="hotel-room-image">
               <h2>Hotel Details</h2>
-              {/* Uncomment and modify the next line if image data is available */}
-              {/* <img src={hotel.image1} alt={hotel.name} className="image-placeholder" /> */}
-              <div><strong>Name:</strong> {hotel.name}</div>
+              <div><strong>ID:</strong> {hotel.ID}</div>
               <div><strong>Location:</strong> {hotel.location}</div>
-              <div><strong>Number of Cases:</strong> {hotel.numberOfCases}</div>
+              <div><strong>Match Probability:</strong> {hotel.probability}%</div>
             </section>
           ))
         ) : (

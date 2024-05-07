@@ -136,7 +136,8 @@ def predict_vit(image):
         output = pretrained_vit(image)
     probabilities, indices = torch.topk(output, 5)
     top_hotel_ids = [class_names[idx] for idx in indices[0]]
-    return top_hotel_ids
+    top_probabilities = [prob.item() for prob in probabilities[0]]  # Convert probabilities to regular float list
+    return top_hotel_ids, top_probabilities
 
 
 # Flask route for ViT model predictions
@@ -154,10 +155,12 @@ def predict():
             response = requests.get(image_url)
             print(response.text)
             image = Image.open(BytesIO(response.content)).convert('RGB')
-            predicted_labels = predict_vit(image)
-
-            print(predicted_labels)
-            return jsonify({"predicted_labels": predicted_labels})
+            top_hotel_ids, top_probabilities = predict_vit(image)
+            response_data = {
+                'hotelIds': top_hotel_ids,
+                'probabilities': top_probabilities
+            }
+            return jsonify(response_data)
         except Exception as e:
             print(str(e))
             return jsonify({"error": str(e)})
