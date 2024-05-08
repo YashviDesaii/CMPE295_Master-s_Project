@@ -1,52 +1,29 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
+import { db } from './firebase'; // Ensure this import path is correct
+import { doc, updateDoc } from 'firebase/firestore';
 import './CaseDetailsList.css';
 
-const CaseDetailsList = ({ cases }) => {
-  const [filters, setFilters] = useState({
-    caseNumber: '',
-    status: '',
-    hotel: '',
-    victimsCount: '',
-    officer: '',
-  });
+const CaseDetailsList = ({ cases, paginate, currentPage, totalCases, casesPerPage }) => {
+  const pageNumbers = [];
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value
-    }));
-  };
+  for (let i = 1; i <= Math.ceil(totalCases / casesPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
-  // Memoize the filtered cases to avoid unnecessary computations on each render
-  const filteredCases = useMemo(() => {
-    return cases.filter((c) => {
-      return (
-        (filters.caseNumber ? c.name.includes(filters.caseNumber) : true) &&
-        (filters.status ? c.status.includes(filters.status) : true) &&
-        (filters.hotel ? c.location.includes(filters.hotel) : true) &&
-        (filters.victimsCount ? c.victimsCount.toString() === filters.victimsCount : true) &&
-        (filters.officer ? c.officer.includes(filters.officer) : true)
-      );
+  const handleStatusChange = async (caseId, newStatus) => {
+    const caseRef = doc(db, 'policeReports', caseId);
+    await updateDoc(caseRef, {
+      status: newStatus
     });
-  }, [cases, filters]);
+  };
 
   return (
     <div>
-      <div className="filters">
-        {/* Add inputs/selects for each filter */}
-        <input
-          name="caseNumber"
-          value={filters.caseNumber}
-          onChange={handleFilterChange}
-          placeholder="Filter by case number"
-        />
-        {/* Add more filter inputs as needed */}
-      </div>
       <table className="case-details-table">
         <thead>
           <tr>
             <th>Case Number</th>
+            <th>Description</th>
             <th>Status</th>
             <th>Hotel</th>
             <th>Victims Count</th>
@@ -54,17 +31,34 @@ const CaseDetailsList = ({ cases }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredCases.map((caseDetail) => (
+          {cases.map(caseDetail => (
             <tr key={caseDetail.id}>
-              <td>{caseDetail.name}</td>
-              <td>{caseDetail.status}</td>
-              <td>{caseDetail.location}</td>
-              <td>{caseDetail.victimsCount}</td>
-              <td>{caseDetail.officer}</td>
+              <td>{caseDetail.caseNumber}</td>
+              <td>{caseDetail.caseDescription}</td>
+              <td>
+                <select
+                  defaultValue={caseDetail.status}
+                  onChange={(e) => handleStatusChange(caseDetail.id, e.target.value)}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Resolved">Resolved</option>
+                </select>
+              </td>
+              <td>{caseDetail.departmentLocation}</td>
+              <td>{caseDetail.victimCount}</td>
+              <td>{caseDetail.reportingOfficer}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="pagination">
+        {pageNumbers.map(number => (
+          <button key={number} onClick={() => paginate(number)}>
+            {number}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

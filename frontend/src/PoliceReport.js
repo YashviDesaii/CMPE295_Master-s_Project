@@ -59,7 +59,8 @@ const PoliceReportForm = () => {
         departmentLocation: formState.departmentLocation,
         caseDescription: formState.caseDescription,
         victimCount: formState.victimCount,
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        status: "Active"
       });
   
 
@@ -70,7 +71,8 @@ const PoliceReportForm = () => {
         departmentLocation: formState.departmentLocation,
         caseDescription: formState.caseDescription,
         victimCount: formState.victimCount,
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        status: "Active"
       });
       console.log(response)
       if (response.data) {
@@ -89,6 +91,7 @@ const PoliceReportForm = () => {
         caseDescription: '',
         victimCount:'',
         image: null,
+        status: "Active"
       });
   
     } catch (error) {
