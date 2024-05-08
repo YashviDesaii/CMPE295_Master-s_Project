@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './HotelMatch.css';
 import { db } from './firebase';
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, updateDoc } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom'; 
 import NavigationMenu from './Navbar';
 
@@ -50,13 +50,27 @@ function HotelMatch() {
               console.error("Error adding document: ", error);
             });
         } else {
-          // Assuming each query returns exactly one doc
-          const hotelData = snapshot.docs.map(doc => doc.data())[0];
-          const probability = (softmaxProbabilities[index] * 100).toFixed(2); // Softmax probability to percentage
-          // Check if relatedCases array exists, if not create it and add caseId
-          hotelData.relatedCases = hotelData.relatedCases || [];
-          hotelData.relatedCases.push(caseId);
-          return { ...hotelData, probability }; // Formatting probability
+          // // Assuming each query returns exactly one doc
+          // const hotelData = snapshot.docs.map(doc => doc.data())[0];
+          // const probability = (softmaxProbabilities[index] * 100).toFixed(2); // Softmax probability to percentage
+          // // Check if relatedCases array exists, if not create it and add caseId
+          // hotelData.relatedCases = hotelData.relatedCases || [];
+          // hotelData.relatedCases.push(caseId);
+          // return { ...hotelData, probability }; // Formatting probability
+
+          console.log("getting into else part");
+          const hotelDoc = snapshot.docs[0]; // Get the document reference
+          const hotelsData = hotelDoc.data();
+          hotelsData.relatedCases.push(caseId);
+          
+          try {
+            // Update the document in Firebase with the new relatedCases array
+            updateDoc(hotelDoc.ref, { relatedCases: hotelsData.relatedCases });
+            return { ...hotelsData, firebaseId: hotelDoc.id };
+          } catch (error) {
+            console.error("Error updating document: ", error);
+            alert("Failed to update hotel data.");
+          }
         }
       });
     });
