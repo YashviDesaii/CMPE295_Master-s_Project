@@ -18,6 +18,7 @@ function Hotel() {
       if (!qsnapshot.empty) {
         const fetchedHotels = qsnapshot.docs.map(doc => ({
           id: doc.id,
+          ID: doc.data().ID,
           name: doc.data().name,
           location: doc.data().location, // Assuming location is a field in the document
           image: doc.data().image1, // Assuming image is a field in the document
@@ -64,15 +65,14 @@ function Hotel() {
           <select value={selectedHotelId} onChange={handleSelect}>
             <option value="">Select a hotel</option>
             {hotels.map((hotel, index) => (
-              <option key={hotel.id} value={hotel.id}>
-                {hotel.name}
+              <option key={hotel.ID} value={hotel.ID}>
+                {hotel.ID}
               </option>
             ))}
           </select>
           {selectedHotelData && (
             <div>
-              <p>Selected Hotel: {selectedHotelData.name}</p>
-              <p>Location: {selectedHotelData.location}</p>
+              <p>Selected Hotel: {selectedHotelData.ID}</p>
               <div className="hotel-images">
                 <h2>Images</h2>
                   {selectedHotelData && selectedHotelData.image1 && (

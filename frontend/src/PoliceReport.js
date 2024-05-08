@@ -39,6 +39,8 @@ const PoliceReportForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let imageUrl = "";
+    const generatedCaseNumber = Math.floor(Math.random() * 10000); // Ensure this is set outside the Firestore document call
+
     if (formState.image) {
       const storageRef = ref(storage, `images/${formState.image.name}`);
       try {
@@ -53,7 +55,7 @@ const PoliceReportForm = () => {
 
     try {
       const docRef = await addDoc(collection(db, "policeReports"), {
-        caseNumber: Math.floor(Math.random() * 10000),
+        caseNumber: generatedCaseNumber,
         caseDate: new Date().toLocaleDateString(),
         reportingOfficer: formState.reportingOfficer,
         departmentLocation: formState.departmentLocation,
@@ -66,7 +68,7 @@ const PoliceReportForm = () => {
 
       // Make a POST request with the data to the Flask backend
       const response = await axios.post('http://127.0.0.1:5000/predict', {
-        caseNumber: caseNumber,
+        caseNumber: generatedCaseNumber,
         reportingOfficer: formState.reportingOfficer,
         departmentLocation: formState.departmentLocation,
         caseDescription: formState.caseDescription,
@@ -74,18 +76,15 @@ const PoliceReportForm = () => {
         imageUrl: imageUrl,
         status: "Active"
       });
-      console.log(response)
+      console.log(response);
       if (response.data) {
-        // Handle the response data as needed
-        console.log('Prediction from server:', response.data);
-        navigate('/hotel-match', { state: { predictionData: response.data } });
-        //alert('Prediction received: ' + response.data.label);
-
+        console.log(generatedCaseNumber)
+        // Navigate with the prediction data and caseNumber
+        navigate('/hotel-match', { state: { predictionData: response.data, caseId: generatedCaseNumber } });
       }
   
       // Reset form state after submission
       setFormState({
-        // caseNumber: '',
         reportingOfficer: '',
         departmentLocation: '',
         caseDescription: '',
@@ -98,7 +97,8 @@ const PoliceReportForm = () => {
       console.error('Error submitting report: ', error);
       alert(error.message);
     }
-  };
+};
+
   
   return (
     <div className="police-reporting">

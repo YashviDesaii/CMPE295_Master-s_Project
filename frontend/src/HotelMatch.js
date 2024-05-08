@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './HotelMatch.css';
 import { db } from './firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom'; 
 import NavigationMenu from './Navbar';
 
@@ -9,29 +9,55 @@ function HotelMatch() {
   const [hotelData, setHotelData] = useState([]);
   const location = useLocation();
   const predictionData = location.state?.predictionData;
+  const caseId = location.state?.caseId;
+
+  console.log("case id here",caseId);
 
   useEffect(() => {
     if (predictionData && predictionData.hotelIds) {
       console.log('Received prediction data:', predictionData);
-      fetchHotelData(predictionData);
+      fetchHotelData(predictionData, caseId);
     }
   }, [predictionData]);
-  
+
   function softmax(arr) {
-    return arr.map(value => Math.exp(value))
-               .reduce((a, b) => a + b, 0);
+    const maxLog = Math.max(...arr);
+    const scaleArr = arr.map(value => Math.exp(value - maxLog));
+    const sum = scaleArr.reduce((acc, val) => acc + val, 0);
+    return scaleArr.map(value => value / sum);
   }
-  const fetchHotelData = async (predictionData) => {
+
+  const fetchHotelData = async (predictionData, caseId) => {
     const { hotelIds, probabilities } = predictionData;
-    const sumOfExps = softmax(probabilities);
+    const softmaxProbabilities = softmax(probabilities);
     const hotelsCollectionRef = collection(db, "hotels");
     const promises = hotelIds.map((id, index) => {
       const q = query(hotelsCollectionRef, where("ID", "==", id));
       return getDocs(q).then(snapshot => {
-        // Assuming each query returns exactly one doc
-        const hotelData = snapshot.docs.map(doc => doc.data())[0];
-        const probability = (Math.exp(probabilities[index]) / sumOfExps) * 100; // softmax probability to percentage
-        return { ...hotelData, probability: probability.toFixed(2) }; // Formatting probability
+        if (snapshot.empty) {
+          // No matching document, create a new hotel entry
+          const newHotel = {
+            ID: id,
+            probability: (softmaxProbabilities[index] * 100).toFixed(2), // Formatting probability
+            relatedCases: [caseId],  // Initialize with caseId
+          };
+          addDoc(hotelsCollectionRef, newHotel)
+            .then(docRef => {
+              console.log("Document written with ID: ", docRef.id);
+              return { ...newHotel, firebaseId: docRef.id };
+            })
+            .catch((error) => {
+              console.error("Error adding document: ", error);
+            });
+        } else {
+          // Assuming each query returns exactly one doc
+          const hotelData = snapshot.docs.map(doc => doc.data())[0];
+          const probability = (softmaxProbabilities[index] * 100).toFixed(2); // Softmax probability to percentage
+          // Check if relatedCases array exists, if not create it and add caseId
+          hotelData.relatedCases = hotelData.relatedCases || [];
+          hotelData.relatedCases.push(caseId);
+          return { ...hotelData, probability }; // Formatting probability
+        }
       });
     });
 
@@ -44,6 +70,7 @@ function HotelMatch() {
     }
   };
 
+
   return (
     <div className="hotel-match">
       <header className="header">
@@ -55,7 +82,6 @@ function HotelMatch() {
             <section key={index} className="hotel-room-image">
               <h2>Hotel Details</h2>
               <div><strong>ID:</strong> {hotel.ID}</div>
-              <div><strong>Location:</strong> {hotel.location}</div>
               <div><strong>Match Probability:</strong> {hotel.probability}%</div>
             </section>
           ))
