@@ -22,7 +22,7 @@ const Dashboard = () => {
       const fetchedReports = reportSnapshot.docs.map(doc => doc.data());
       const fetchedHotels = hotelSnapshot.docs.map(doc => ({
         name: doc.data().ID,
-        cases: doc.data().numberOfCases,
+        cases: doc.data().relatedCases.length,
       }));
 
       const statusCounter = {};
