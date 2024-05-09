@@ -67,4 +67,25 @@ body {
       width: 95%;
     }
   }
-  
+  /* Universal selector for all inputs within .police-reporting class */
+.police-reporting input,
+.police-reporting select,
+.police-reporting textarea {
+  width: 100%; /* Ensures full width within form group */
+  padding: 8px; /* Comfortable padding */
+  margin: 8px 0; /* Standard margin for top and bottom */
+  border: 1px solid #333; /* Standardized dark border for visibility */
+  border-radius: 4px; /* Rounded corners for aesthetics */
+  box-sizing: border-box; /* Ensures padding does not affect width */
+}
+
+/* Specific styles for file input for visual consistency */
+.police-reporting input[type='file'] {
+  background-color: #f4f4f4; /* Lighter background to distinguish from other inputs */
+  cursor: pointer; /* Indicates that this is an interactive element */
+}
+
+/* Ensure that number inputs (like victim count) are included */
+.police-reporting input[type='number'] {
+  /* Same styling as other inputs; add any specific styles for number inputs here if needed */
+}
