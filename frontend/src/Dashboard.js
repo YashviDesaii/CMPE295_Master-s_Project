@@ -31,11 +31,20 @@ const Dashboard = () => {
       const dateCounter = {};
       const hotelCases = {};
 
+      fetchedReports.forEach(report => {
+        statusCounter[report.status] = (statusCounter[report.status] || 0) + 1;
+        dateCounter[report.caseDate] = (dateCounter[report.caseDate] || 0) + 1;
+      });
+
+      fetchedHotels.forEach(hotel => {
+        hotelCases[hotel.name] = hotel.cases;
+      });
+
       fetchedHotels.forEach(hotel => {
         if (hotelCases[hotel.name]) {
           hotelCases[hotel.name] += hotel.cases; 
         } else {
-          hotelCases[hotel.name] = hotel.cases;
+          hotelCases[hotel.name] = hotel.cases; 
         }
       });
 
