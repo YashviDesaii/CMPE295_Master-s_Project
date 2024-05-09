@@ -87,6 +87,8 @@ const HeatmapLayer = ({ incidents }) => {
 const HumanTraffickingPortal = () => {
   const [incidents, setIncidents] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [incidentsCount, setIncidentsCount] = useState(0);
+
 
   useEffect(() => {
     fetch('https://data.seattle.gov/resource/kzjm-xkqj.json')
@@ -98,32 +100,42 @@ const HumanTraffickingPortal = () => {
       .catch(error => {
         console.log('Error fetching data:', error);
       });
-      const fetchDepartments = async () => {
-        const querySnapshot = await getDocs(collection(db, 'policeReports'));
-        const departmentData = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-          return { name: data.departmentLocation };
-        });
-        setDepartments(departmentData);
+      const initFetch = async () => {
+        const totalCasesCount = await fetchDepartments();
+        setIncidentsCount(totalCasesCount);
       };
   
-      fetchDepartments();
-  }, []);
+      initFetch();
+    }, []);
+  
+    const fetchDepartments = async () => {
+      const querySnapshot = await getDocs(collection(db, 'policeReports'));
+      let totalCasesCount = 0;
+      const departmentData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        totalCasesCount += 1;
+        return { name: data.departmentLocation };
+      });
+      setDepartments(departmentData);
+      return totalCasesCount;
+    };
 
   return (
     <div className="portal-container">
       <header className="header">
         <NavigationMenu />
       </header>
-      <div className="search-section">
+      {/* <div className="search-section">
         <h2>Human Trafficking Cases Map</h2>
         <input type="text" placeholder="Search Location" />
         <button>Search</button>
-      </div>
+      </div> */}
 
       <div className="cases-summary">
         <h3>Cases Summary</h3>
-        <p>Total Cases: {incidents.length}</p>
+        <p>Total Crime: {incidents.length}</p>
+        <p>Total Human Trafficking cases: {incidentsCount}</p>
+
       </div>
 
       <div className="map-view">
