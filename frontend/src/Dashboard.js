@@ -22,24 +22,26 @@ const Dashboard = () => {
       const fetchedReports = reportSnapshot.docs.map(doc => doc.data());
       const fetchedHotels = hotelSnapshot.docs.map(doc => ({
         name: doc.data().ID,
-        cases: doc.data().relatedCases.length,
+        cases: Array.isArray(doc.data().relatedCases) ? doc.data().relatedCases.length : 0, 
+
+    
       }));
 
       const statusCounter = {};
       const dateCounter = {};
       const hotelCases = {};
 
-      fetchedReports.forEach(report => {
-        statusCounter[report.status] = (statusCounter[report.status] || 0) + 1;
-        dateCounter[report.caseDate] = (dateCounter[report.caseDate] || 0) + 1;
-      });
-
       fetchedHotels.forEach(hotel => {
-        hotelCases[hotel.name] = hotel.cases;
+        if (hotelCases[hotel.name]) {
+          hotelCases[hotel.name] += hotel.cases; 
+        } else {
+          hotelCases[hotel.name] = hotel.cases;
+        }
       });
 
       setPoliceReports(fetchedReports);
       setHotels(fetchedHotels);
+      console.log(fetchedHotels);
       setStatusCounts(statusCounter);
       setDateCounts(dateCounter);
       setHotelCaseCounts(hotelCases);
