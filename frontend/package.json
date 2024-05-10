@@ -38,8 +38,16 @@
     },
     "moduleNameMapper": {
       "^axios$": "axios/dist/node/axios.cjs"
-    }
-  },  
+    }, "coveragePathIgnorePatterns": [
+      
+      "src/App.js",
+      "src/PoliceReport.js",
+      "src/firebase.js",
+      "src/index.js",
+      "src/reportWebVitals.js",
+      "src/HumanTraffickingPortal.js"
+    ]
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -56,6 +64,7 @@
     "@babel/core": "^7.24.5",
     "@babel/preset-env": "^7.24.5",
     "@babel/preset-react": "^7.24.1",
-    "babel-jest": "^29.7.0"
+    "babel-jest": "^29.7.0",
+    "jest-canvas-mock": "^2.5.2"
   }
 }

@@ -1,15 +1,14 @@
-// src/tests/Dashboard.test.js
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import Dashboard from './Dashboard';
-import { MemoryRouter } from 'react-router-dom';
+import { db } from './firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { BrowserRouter } from 'react-router-dom';
 
+// Mock the necessary Firebase Firestore methods
 jest.mock('./firebase', () => ({
-  db: {
-    collection: jest.fn(),
-  },
+  db: jest.fn(),
 }));
 
 jest.mock('firebase/firestore', () => ({
@@ -17,80 +16,117 @@ jest.mock('firebase/firestore', () => ({
   getDocs: jest.fn(),
 }));
 
-describe('Dashboard', () => {
+jest.mock('./Navbar', () => () => <div>Navigation Menu</div>);
+
+describe('Dashboard Component', () => {
+  const mockPoliceReports = [
+    { status: 'Active', caseDate: '2023-01-01' },
+    { status: 'Resolved', caseDate: '2023-01-02' },
+    { status: 'Pending', caseDate: '2023-01-03' },
+  ];
+
+  const mockHotels = [
+    { ID: 'Hotel A', relatedCases: ['case1', 'case2'] },
+    { ID: 'Hotel B', relatedCases: ['case3'] },
+  ];
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    getDocs.mockImplementation((collectionRef) => {
+      const collectionName = collectionRef._query.path.segments[0];
+      if (collectionName === 'policeReports') {
+        return Promise.resolve({
+          docs: mockPoliceReports.map((report) => ({
+            data: () => report,
+          })),
+        });
+      }
+      if (collectionName === 'hotels') {
+        return Promise.resolve({
+          docs: mockHotels.map((hotel) => ({
+            data: () => hotel,
+          })),
+        });
+      }
+      return Promise.resolve({ docs: [] });
+    });
   });
 
-  test('renders Dashboard component', async () => {
-    getDocs.mockResolvedValueOnce({
-      docs: [
-        { id: '1', data: () => ({ status: 'Active', caseDate: '2023-01-01' }) },
-        { id: '2', data: () => ({ status: 'Pending', caseDate: '2023-01-02' }) },
-      ],
+  test('renders Dashboard component with navigation menu', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      );
     });
 
-    getDocs.mockResolvedValueOnce({
-      docs: [
-        { id: '1', data: () => ({ ID: 'Hotel1', relatedCases: ['case1', 'case2'] }) },
-        { id: '2', data: () => ({ ID: 'Hotel2', relatedCases: ['case3'] }) },
-      ],
-    });
-
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
-
-    // Check if the main elements are rendered
-    expect(screen.getByText(/Combat Human Trafficking/i)).toBeInTheDocument();
-    expect(screen.getByText(/Prevent Human Trafficking/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /View Your Cases/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Create Case/i })).toBeInTheDocument();
-
-    // Wait for data fetching and state updates
-    await waitFor(() => {
-      expect(screen.getByText(/Status of Cases/i)).toBeInTheDocument();
-      expect(screen.getByText(/Cases Reported Each Day/i)).toBeInTheDocument();
-      expect(screen.getByText(/Number of Cases per Hotel/i)).toBeInTheDocument();
-    });
-
-    // Check if the charts are rendered
-    expect(screen.getByText(/Status of Cases/i)).toBeInTheDocument();
-    expect(screen.getByText(/Cases Reported Each Day/i)).toBeInTheDocument();
-    expect(screen.getByText(/Number of Cases per Hotel/i)).toBeInTheDocument();
+    expect(screen.getByText('Navigation Menu')).toBeInTheDocument();
+    expect(screen.getByText('Law Enforcement Portal')).toBeInTheDocument();
   });
 
-  test('fetches and displays data correctly', async () => {
-    getDocs.mockResolvedValueOnce({
-      docs: [
-        { id: '1', data: () => ({ status: 'Active', caseDate: '2023-01-01' }) },
-        { id: '2', data: () => ({ status: 'Pending', caseDate: '2023-01-02' }) },
-      ],
+  test('fetches and displays police reports and hotels data', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      );
     });
-
-    getDocs.mockResolvedValueOnce({
-      docs: [
-        { id: '1', data: () => ({ ID: 'Hotel1', relatedCases: ['case1', 'case2'] }) },
-        { id: '2', data: () => ({ ID: 'Hotel2', relatedCases: ['case3'] }) },
-      ],
-    });
-
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
 
     await waitFor(() => {
-      // Check if the fetched data is processed correctly
-      expect(screen.getByText(/Active/i)).toBeInTheDocument();
-      expect(screen.getByText(/Pending/i)).toBeInTheDocument();
-      expect(screen.getByText(/2023-01-01/i)).toBeInTheDocument();
-      expect(screen.getByText(/2023-01-02/i)).toBeInTheDocument();
-      expect(screen.getByText(/Hotel1/i)).toBeInTheDocument();
-      expect(screen.getByText(/Hotel2/i)).toBeInTheDocument();
+      expect(screen.getByText('Status of Cases')).toBeInTheDocument();
+      expect(screen.getByText('Cases Reported Each Day')).toBeInTheDocument();
+      expect(screen.getByText('Number of Cases per Hotel')).toBeInTheDocument();
+    });
+  });
+
+  test('renders pie chart for status counts', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Status of Cases')).toBeInTheDocument();
+      const pieChartCanvas = screen.getByRole('img', { name: /Status of Cases/i });
+      expect(pieChartCanvas).toBeInTheDocument();
+    });
+  });
+
+  test('renders bar chart for cases reported each day', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Cases Reported Each Day')).toBeInTheDocument();
+      const barChartCanvas = screen.getByRole('img', { name: /Cases Reported Each Day/i });
+      expect(barChartCanvas).toBeInTheDocument();
+    });
+  });
+
+  test('renders bar chart for number of cases per hotel', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Number of Cases per Hotel')).toBeInTheDocument();
+      const barChartCanvas = screen.getByRole('img', { name: /Number of Cases per Hotel/i });
+      expect(barChartCanvas).toBeInTheDocument();
     });
   });
 });

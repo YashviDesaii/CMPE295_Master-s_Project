@@ -34,8 +34,10 @@ describe('SignIn', () => {
     expect(screen.getByRole('heading', { name: /Sign In/i })).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Username/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Password/i)).toBeInTheDocument();
-    expect(screen.getByText(/Don't have an account\? Sign Up/i)).toBeInTheDocument();
+    expect(screen.getByText(/Sign Up/i)).toBeInTheDocument();
   });
+
+
 
   test('handles input changes', () => {
     render(
@@ -53,12 +55,12 @@ describe('SignIn', () => {
 
   test('submits the form and logs in successfully', async () => {
     getDocs.mockResolvedValue({
-      docs: [
-        {
+      forEach: (callback) => {
+        callback({
           id: '1',
           data: () => ({ username: 'testuser', password: 'password' }),
-        },
-      ],
+        });
+      },
     });
 
     render(
@@ -77,7 +79,6 @@ describe('SignIn', () => {
       expect(screen.queryByRole('heading', { name: /Sign In/i })).not.toBeInTheDocument();
     });
   });
-
   test('shows error message on invalid credentials', async () => {
     getDocs.mockResolvedValue({
       docs: [

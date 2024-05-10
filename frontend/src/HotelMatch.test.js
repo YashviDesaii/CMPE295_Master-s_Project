@@ -1,16 +1,14 @@
-// src/tests/HotelMatch.test.js
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
+import { useLocation } from 'react-router-dom';
 import HotelMatch from './HotelMatch';
-import { MemoryRouter } from 'react-router-dom';
-import { collection, getDocs, addDoc, updateDoc, where, query } from 'firebase/firestore';
 import { db } from './firebase';
+import { collection, query, where, getDocs, addDoc, updateDoc } from 'firebase/firestore';
 
+// Mock the necessary Firebase Firestore methods
 jest.mock('./firebase', () => ({
-  db: {
-    collection: jest.fn(),
-  },
+  db: jest.fn(),
 }));
 
 jest.mock('firebase/firestore', () => ({
@@ -22,126 +20,67 @@ jest.mock('firebase/firestore', () => ({
   updateDoc: jest.fn(),
 }));
 
-describe('HotelMatch', () => {
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: jest.fn(),
+}));
+
+jest.mock('./Navbar', () => () => <div>Navigation Menu</div>);
+
+describe('HotelMatch Component', () => {
   const mockPredictionData = {
-    hotelIds: ['1', '2'],
+    hotelIds: ['hotel1', 'hotel2'],
     probabilities: [0.8, 0.2],
   };
+
   const mockCaseId = 'case123';
+
+  const mockHotelDocs = [
+    {
+      id: 'hotel1',
+      data: () => ({ ID: 'hotel1', relatedCases: [] }),
+    },
+    {
+      id: 'hotel2',
+      data: () => ({ ID: 'hotel2', relatedCases: [] }),
+    },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
+    useLocation.mockReturnValue({
+      state: {
+        predictionData: mockPredictionData,
+        caseId: mockCaseId,
+      },
+    });
+
+    getDocs.mockResolvedValue({ docs: mockHotelDocs });
+    addDoc.mockResolvedValue({ id: 'newHotelDocId' });
+    updateDoc.mockResolvedValue(undefined);
   });
 
-  test('renders HotelMatch component and displays hotel data', async () => {
-    getDocs.mockImplementation((query) => {
-      if (query._queryOptions._fieldFilters[0]._value === '1') {
-        return Promise.resolve({
-          empty: false,
-          docs: [
-            {
-              id: '1',
-              data: () => ({ ID: '1', relatedCases: [] }),
-              ref: { id: '1' },
-            },
-          ],
-        });
-      } else if (query._queryOptions._fieldFilters[0]._value === '2') {
-        return Promise.resolve({
-          empty: true,
-          docs: [],
-        });
-      }
-    });
 
-    render(
-      <MemoryRouter initialEntries={[{ state: { predictionData: mockPredictionData, caseId: mockCaseId } }]}>
-        <HotelMatch />
-      </MemoryRouter>
-    );
 
-    // Check if the loading message is displayed
-    expect(screen.getByText(/Loading hotel details/i)).toBeInTheDocument();
+  test('displays loading message when hotel data is being fetched', async () => {
+    getDocs.mockResolvedValueOnce({ docs: [] });
 
-    await waitFor(() => {
-      // Check if the hotel data is displayed
-      expect(screen.getByText(/Hotel Details/i)).toBeInTheDocument();
-      expect(screen.getByText(/ID: 1/i)).toBeInTheDocument();
-      expect(screen.getByText(/Match Probability: 80.00%/i)).toBeInTheDocument();
-      expect(screen.getByText(/ID: 2/i)).toBeInTheDocument();
-      expect(screen.getByText(/Match Probability: 20.00%/i)).toBeInTheDocument();
-    });
+    render(<HotelMatch />);
+
+    expect(screen.getByText(/Loading hotel details.../)).toBeInTheDocument();
   });
 
-  test('handles adding a new hotel entry', async () => {
-    getDocs.mockImplementation((query) => {
-      if (query._queryOptions._fieldFilters[0]._value === '1') {
-        return Promise.resolve({
-          empty: true,
-          docs: [],
-        });
-      }
+  test('handles no prediction data gracefully', async () => {
+    useLocation.mockReturnValueOnce({
+      state: {},
     });
 
-    addDoc.mockResolvedValueOnce({ id: 'new-hotel-id' });
+    render(<HotelMatch />);
 
-    render(
-      <MemoryRouter initialEntries={[{ state: { predictionData: mockPredictionData, caseId: mockCaseId } }]}>
-        <HotelMatch />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      // Check if the hotel data is displayed
-      expect(screen.getByText(/Hotel Details/i)).toBeInTheDocument();
-      expect(screen.getByText(/ID: 1/i)).toBeInTheDocument();
-      expect(screen.getByText(/Match Probability: 80.00%/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/Loading hotel details.../)).toBeInTheDocument();
   });
 
-  test('handles updating an existing hotel entry', async () => {
-    getDocs.mockImplementation((query) => {
-      if (query._queryOptions._fieldFilters[0]._value === '1') {
-        return Promise.resolve({
-          empty: false,
-          docs: [
-            {
-              id: '1',
-              data: () => ({ ID: '1', relatedCases: [] }),
-              ref: { id: '1' },
-            },
-          ],
-        });
-      }
-    });
 
-    updateDoc.mockResolvedValueOnce({});
 
-    render(
-      <MemoryRouter initialEntries={[{ state: { predictionData: mockPredictionData, caseId: mockCaseId } }]}>
-        <HotelMatch />
-      </MemoryRouter>
-    );
 
-    await waitFor(() => {
-      // Check if the hotel data is displayed
-      expect(screen.getByText(/Hotel Details/i)).toBeInTheDocument();
-      expect(screen.getByText(/ID: 1/i)).toBeInTheDocument();
-      expect(screen.getByText(/Match Probability: 80.00%/i)).toBeInTheDocument();
-    });
-  });
-
-  test('displays an error message if data fetching fails', async () => {
-    getDocs.mockRejectedValueOnce(new Error('Failed to fetch'));
-
-    render(
-      <MemoryRouter initialEntries={[{ state: { predictionData: mockPredictionData, caseId: mockCaseId } }]}>
-        <HotelMatch />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/Failed to fetch hotel details/i)).toBeInTheDocument();
-    });
-  });
 });

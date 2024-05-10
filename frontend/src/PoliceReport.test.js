@@ -1,30 +1,19 @@
-// src/tests/PoliceReport.test.js
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import userEvent from '@testing-library/user-event';
+import { BrowserRouter } from 'react-router-dom';
 import PoliceReportForm from './PoliceReport';
-import { MemoryRouter } from 'react-router-dom';
 import { db, storage } from './firebase';
+import { addDoc, collection } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import axios from 'axios';
 
-import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
-jest.mock('./firebase', () => {
-  const originalModule = jest.requireActual('./firebase');
-  return {
-    ...originalModule,
-    db: { collection: jest.fn() },
-    storage: { ref: jest.fn() }
-  };
-});
-
-jest.mock("firebase/firestore", () => ({
-  collection: jest.fn(),
+jest.mock('firebase/firestore', () => ({
   addDoc: jest.fn(),
+  collection: jest.fn(),
 }));
 
-jest.mock("firebase/storage", () => ({
+jest.mock('firebase/storage', () => ({
   ref: jest.fn(),
   uploadBytes: jest.fn(),
   getDownloadURL: jest.fn(),
@@ -32,66 +21,106 @@ jest.mock("firebase/storage", () => ({
 
 jest.mock('axios');
 
-describe('PoliceReportForm', () => {
+jest.mock('./Navbar', () => () => <div>Navigation Menu</div>);
+
+jest.mock('react-router-dom', () => ({
+  useNavigate: () => jest.fn(),
+}));
+
+describe('PoliceReportForm Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    addDoc.mockClear();
+    uploadBytes.mockClear();
+    getDownloadURL.mockClear();
+    axios.post.mockClear();
   });
 
-  test('renders PoliceReportForm component', () => {
+  test('renders the component correctly', () => {
     render(
-      <MemoryRouter>
+      <BrowserRouter>
         <PoliceReportForm />
-      </MemoryRouter>
+      </BrowserRouter>
     );
 
-    expect(screen.getByText(/New Police Report/i)).toBeInTheDocument();
+    expect(screen.getByText('Navigation Menu')).toBeInTheDocument();
+    expect(screen.getByText('New Police Report')).toBeInTheDocument();
+    expect(screen.getByLabelText('Reporting Officer')).toBeInTheDocument();
+    expect(screen.getByLabelText('Police Department Location')).toBeInTheDocument();
+    expect(screen.getByLabelText('Case Description')).toBeInTheDocument();
+    expect(screen.getByLabelText('Victim Count')).toBeInTheDocument();
+    expect(screen.getByLabelText('Image')).toBeInTheDocument();
+    expect(screen.getByText('Submit')).toBeInTheDocument();
   });
 
-  test('handles form input changes', () => {
+  test('handles form input correctly', () => {
     render(
-      <MemoryRouter>
+      <BrowserRouter>
         <PoliceReportForm />
-      </MemoryRouter>
+      </BrowserRouter>
     );
 
-    userEvent.type(screen.getByLabelText(/Reporting Officer/i), 'John Doe');
-    userEvent.type(screen.getByLabelText(/Police Department Location/i), 'Downtown');
-    userEvent.type(screen.getByLabelText(/Case Description/i), 'Description of the case');
-    userEvent.type(screen.getByLabelText(/Victim Count/i), '3');
+    fireEvent.change(screen.getByLabelText('Reporting Officer'), { target: { value: 'Officer John' } });
+    fireEvent.change(screen.getByLabelText('Police Department Location'), { target: { value: 'Station A' } });
+    fireEvent.change(screen.getByLabelText('Case Description'), { target: { value: 'Description of the case' } });
+    fireEvent.change(screen.getByLabelText('Victim Count'), { target: { value: '3' } });
 
-    expect(screen.getByLabelText(/Reporting Officer/i)).toHaveValue('John Doe');
-    expect(screen.getByLabelText(/Police Department Location/i)).toHaveValue('Downtown');
-    expect(screen.getByLabelText(/Case Description/i)).toHaveValue('Description of the case');
-    expect(screen.getByLabelText(/Victim Count/i)).toHaveValue('3');
+    expect(screen.getByLabelText('Reporting Officer').value).toBe('Officer John');
+    expect(screen.getByLabelText('Police Department Location').value).toBe('Station A');
+    expect(screen.getByLabelText('Case Description').value).toBe('Description of the case');
+    expect(screen.getByLabelText('Victim Count').value).toBe('3');
   });
 
-  test('submits the form and calls Firebase functions', async () => {
-    addDoc.mockResolvedValue({ id: '123' });
-    uploadBytes.mockResolvedValue({});
-    getDownloadURL.mockResolvedValue('http://fakeurl.com/image.png');
+  test('submits the form successfully', async () => {
+    addDoc.mockResolvedValue({ id: '12345' });
+    uploadBytes.mockResolvedValue({ ref: {} });
+    getDownloadURL.mockResolvedValue('http://image.url');
+    axios.post.mockResolvedValue({ data: { prediction: 'success' } });
 
     render(
-      <MemoryRouter>
+      <BrowserRouter>
         <PoliceReportForm />
-      </MemoryRouter>
+      </BrowserRouter>
     );
 
-    userEvent.type(screen.getByLabelText(/Reporting Officer/i), 'John Doe');
-    userEvent.type(screen.getByLabelText(/Police Department Location/i), 'Downtown');
-    userEvent.type(screen.getByLabelText(/Case Description/i), 'Description of the case');
-    userEvent.type(screen.getByLabelText(/Victim Count/i), '3');
+    fireEvent.change(screen.getByLabelText('Reporting Officer'), { target: { value: 'Officer John' } });
+    fireEvent.change(screen.getByLabelText('Police Department Location'), { target: { value: 'Station A' } });
+    fireEvent.change(screen.getByLabelText('Case Description'), { target: { value: 'Description of the case' } });
+    fireEvent.change(screen.getByLabelText('Victim Count'), { target: { value: '3' } });
 
-    const file = new File(['image'], 'image.png', { type: 'image/png' });
-    const inputFile = screen.getByLabelText(/Image/i);
-    userEvent.upload(inputFile, file);
+    const file = new File(['dummy content'], 'example.png', { type: 'image/png' });
+    fireEvent.change(screen.getByLabelText('Image'), { target: { files: [file] } });
 
-    const submitButton = screen.getByText(/Submit/i);
-    fireEvent.click(submitButton);
+    fireEvent.click(screen.getByText('Submit'));
 
     await waitFor(() => {
       expect(addDoc).toHaveBeenCalled();
       expect(uploadBytes).toHaveBeenCalled();
       expect(getDownloadURL).toHaveBeenCalled();
+      expect(axios.post).toHaveBeenCalled();
+    });
+  });
+
+  test('displays an error message if the image upload fails', async () => {
+    uploadBytes.mockRejectedValue(new Error('Upload failed'));
+
+    render(
+      <BrowserRouter>
+        <PoliceReportForm />
+      </BrowserRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText('Reporting Officer'), { target: { value: 'Officer John' } });
+    fireEvent.change(screen.getByLabelText('Police Department Location'), { target: { value: 'Station A' } });
+    fireEvent.change(screen.getByLabelText('Case Description'), { target: { value: 'Description of the case' } });
+    fireEvent.change(screen.getByLabelText('Victim Count'), { target: { value: '3' } });
+
+    const file = new File(['dummy content'], 'example.png', { type: 'image/png' });
+    fireEvent.change(screen.getByLabelText('Image'), { target: { files: [file] } });
+
+    fireEvent.click(screen.getByText('Submit'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to upload image, please try again.')).toBeInTheDocument();
     });
   });
 });
