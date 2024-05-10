@@ -10,8 +10,9 @@ function HotelMatch() {
   const location = useLocation();
   const predictionData = location.state?.predictionData;
   const caseId = location.state?.caseId;
+  const imageUrl = location.state?.imageUrl; // Changed ImageUrl to imageUrl for consistency
 
-  console.log("case id here",caseId);
+  console.log("case id here", caseId);
 
   useEffect(() => {
     if (predictionData && predictionData.hotelIds) {
@@ -40,36 +41,30 @@ function HotelMatch() {
             ID: id,
             probability: (softmaxProbabilities[index] * 100).toFixed(2), // Formatting probability
             relatedCases: [caseId],  // Initialize with caseId
+            imageUrl: '' // Placeholder for new hotels without image URL
           };
-          addDoc(hotelsCollectionRef, newHotel)
+          return addDoc(hotelsCollectionRef, newHotel)
             .then(docRef => {
               console.log("Document written with ID: ", docRef.id);
               return { ...newHotel, firebaseId: docRef.id };
             })
             .catch((error) => {
               console.error("Error adding document: ", error);
+              return null;
             });
         } else {
-          // // Assuming each query returns exactly one doc
-          // const hotelData = snapshot.docs.map(doc => doc.data())[0];
-          // const probability = (softmaxProbabilities[index] * 100).toFixed(2); // Softmax probability to percentage
-          // // Check if relatedCases array exists, if not create it and add caseId
-          // hotelData.relatedCases = hotelData.relatedCases || [];
-          // hotelData.relatedCases.push(caseId);
-          // return { ...hotelData, probability }; // Formatting probability
-
-          console.log("getting into else part");
           const hotelDoc = snapshot.docs[0]; // Get the document reference
           const hotelsData = hotelDoc.data();
+          hotelsData.relatedCases = hotelsData.relatedCases || [];
           hotelsData.relatedCases.push(caseId);
-          
+
           try {
             // Update the document in Firebase with the new relatedCases array
             updateDoc(hotelDoc.ref, { relatedCases: hotelsData.relatedCases });
             return { ...hotelsData, firebaseId: hotelDoc.id };
           } catch (error) {
             console.error("Error updating document: ", error);
-            alert("Failed to update hotel data.");
+            return null;
           }
         }
       });
@@ -77,26 +72,38 @@ function HotelMatch() {
 
     try {
       const results = await Promise.all(promises);
-      setHotelData(results);
+      const validResults = results.filter(result => result !== null); // Filter out any null results
+      setHotelData(validResults);
     } catch (error) {
       console.error("Error fetching hotel data:", error);
       alert("Failed to fetch hotel details.");
     }
   };
 
-
   return (
     <div className="hotel-match">
       <header className="header">
         <NavigationMenu />
       </header>
+      {imageUrl && (
+        <div className="image-container">
+          <img src={imageUrl} alt="Hotel" className="hotel-image" />
+        </div>
+      )}
       <main className="content">
         {hotelData && hotelData.length > 0 ? (
           hotelData.map((hotel, index) => (
             <section key={index} className="hotel-room-image">
-              <h2>Hotel Details</h2>
-              <div><strong>ID:</strong> {hotel.ID}</div>
-              <div><strong>Match Probability:</strong> {hotel.probability}%</div>
+              <div className="hotel-details">
+                <h2>Hotel Details</h2>
+                <div><strong>ID:</strong> {hotel.ID}</div>
+                <div><strong>Match Probability:</strong> {hotel.probability}%</div>
+              </div>
+              {hotel.imageUrl && (
+                <div className="hotel-image-container">
+                  <img src={hotel.imageUrl} alt={`Hotel ${hotel.ID}`} className="hotel-image" />
+                </div>
+              )}
             </section>
           ))
         ) : (

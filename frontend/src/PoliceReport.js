@@ -80,7 +80,7 @@ const PoliceReportForm = () => {
       if (response.data) {
         console.log(generatedCaseNumber)
         // Navigate with the prediction data and caseNumber
-        navigate('/hotel-match', { state: { predictionData: response.data, caseId: generatedCaseNumber } });
+        navigate('/hotel-match', { state: { predictionData: response.data, caseId: generatedCaseNumber, imageUrl: imageUrl } });
       }
   
       // Reset form state after submission

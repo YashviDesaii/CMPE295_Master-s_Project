@@ -1,44 +1,55 @@
 .hotel-match {
-    font-family: Arial, sans-serif;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    background-color: #f0f0f0;
-  }
-  
-  .navigation a {
-    margin-right: 20px;
-    text-decoration: none;
-    color: black;
-  }
-  
-  .content {
-    padding: 20px;
-  }
-  
-  .hotel-room-image h2, .matched-hotels h2, .your-cases h2 {
-    margin-bottom: 10px;
-  }
-  
-  .image-placeholder {
-    width: 100%;
-    height: 200px; /* Adjust as needed */
-    background-color: #ddd; /* Placeholder color */
-    margin-bottom: 20px;
-  }
-  
-  .hotel-list .hotel, .cases-list .case {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #f0f0f0;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f9fa; /* Assuming this is the background color of other components */
+}
+
+.header {
+  width: 100%;
+}
+
+.image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: #f8f9fa; /* Match the background color of other components */
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add some shadow to make it stand out */
+}
+
+.hotel-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f9fa; /* Match the background color of other components */
+  padding: 20px;
+}
+
+.hotel-room-image {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 80%; /* Adjust as needed */
+}
+
+.hotel-details {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.hotel-image-container {
+  flex-shrink: 0;
+  width: 150px; /* Adjust as needed */
+  height: auto;
+}
