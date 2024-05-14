@@ -67,7 +67,7 @@ function SignIn() {
         <br />
         <button type="submit" className="submit-button">Sign In</button>
       </form>
-      <p style={{textAlign:'center'}}><Link to="/sign-up">Sign Up</Link></p>
+      <p style={{textAlign:'center'}}>Don't have an account? <Link to="/sign-up">Register</Link></p>
     </div>
   );
 }

@@ -20,21 +20,54 @@
     border-collapse: collapse;
     margin-top: 20px;
     box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    border-radius: 8px;
   }
-  
   .case-details-table th,
   .case-details-table td {
     text-align: left;
     padding: 8px;
     border-bottom: 1px solid #ddd;
+    font-size: small;
   }
   
   .case-details-table th {
     background-color: #f9f9f9;
   }
-  
+
   /* Add a hover effect for interactivity */
   .case-details-table tr:hover {
-    background-color: #f1f1f1;
+    background-color: #edf1f3;
   }
+  
+  .case-details-table select {
+    width: 100%;
+    padding: 3px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: inherit;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pagination button:hover {
+    background-color: #f0f0f0;
+  }
+  
+
+  
   

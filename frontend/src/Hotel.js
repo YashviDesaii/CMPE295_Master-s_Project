@@ -49,12 +49,19 @@ function Hotel() {
             setSelectedHotelId('');
         }
     };
+    const WelcomeBanner = () => (
+        <section className="welcome-banner">
+         <h2>View all hotels</h2>
+         <p>Keep track of all the hotels allegedly involved in human trafficking</p>
+        </section>
+      );
 
     return (
         <div className="hotel">
             <header className="header">
                 <NavigationMenu />
             </header>
+            <WelcomeBanner />
             <main className="main-content">
                 <section className="hotel-info">
                     <h1>Please select a hotel from the dropdown</h1>

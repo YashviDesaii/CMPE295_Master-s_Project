@@ -145,10 +145,10 @@ const Dashboard = () => {
       <p>If you see something, say something. Prevent Human Trafficking</p>
       <div className="actions">
         <Link to="/case-management">
-          <button>View Your Cases</button>
+          <button className='button'><span>View Cases</span></button>
         </Link>
         <Link to="/police-report">
-          <button>Create Case</button>
+          <button className='button'><span>File a Case</span></button>
         </Link>
       </div>
     </section>
@@ -158,26 +158,6 @@ const Dashboard = () => {
     <section className="case-metrics">
       {/* Add the respective metric components here */}
     </section>
-  );
-
-  const RecentUpdates = () => (
-    <section className="recent-updates">Recent Updates</section>
-  );
-
-  const FeaturedTools = () => (
-    <section className="featured-tools">Featured Tools</section>
-  );
-
-  const TopNewHotels = () => (
-    <section className="top-new-hotels">Top New Hotels</section>
-  );
-
-  const UserProfile = () => (
-    <section className="user-profile">User Profile</section>
-  );
-
-  const CommunityUpdates = () => (
-    <section className="community-updates">Community Updates</section>
   );
 
   return (
@@ -194,16 +174,10 @@ const Dashboard = () => {
           <Bar data={barChartData} options={barChartOptions} />
         </div>
         <div className="chart-section">
-          <h3>Number of Cases per Hotel</h3>
+          <h3>Number of Related Cases per Hotel</h3>
           <Bar data={hotelBarChartData} options={barChartOptions} />
         </div>
         <div className="content">
-          <CaseMetrics />
-          <RecentUpdates />
-          <FeaturedTools />
-          <TopNewHotels />
-          <UserProfile />
-          <CommunityUpdates />
         </div>
       </main>
     </div>

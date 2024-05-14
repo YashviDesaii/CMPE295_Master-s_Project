@@ -29,8 +29,10 @@ function SignUp() {
 
   return (
     <div className="signup-container">
-      <h2 style={{textAlign:'center'}}>Create your account</h2>
-      <h4 style={{textAlign:'center'}}>Take a step further in fighting human trafficking. </h4>
+      <section className="welcome-banner">
+        <h1>Combat Human Trafficking</h1>
+          <h4 style={{textAlign:'center'}}>Take a step further in fighting human trafficking. </h4>
+        </section>
       <form onSubmit={handleSignUp}>
         <input
           type="text"

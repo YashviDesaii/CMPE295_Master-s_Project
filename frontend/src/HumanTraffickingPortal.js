@@ -120,11 +120,19 @@ const HumanTraffickingPortal = () => {
       return totalCasesCount;
     };
 
+    const WelcomeBanner = () => (
+      <section className="welcome-banner">
+       <h2>Map view</h2>
+       <p>Encover hidden patterns by analyzing the map view</p>
+      </section>
+    );
+
   return (
     <div className="portal-container">
       <header className="header">
         <NavigationMenu />
       </header>
+      <WelcomeBanner />
       {/* <div className="search-section">
         <h2>Human Trafficking Cases Map</h2>
         <input type="text" placeholder="Search Location" />
@@ -147,10 +155,6 @@ const HumanTraffickingPortal = () => {
           <DepartmentLocationLayer departments={departments} />
         </MapContainer>
       </div>
-      
-      <footer>
-        © 2022 Human Trafficking Portal. All rights reserved.
-      </footer>
     </div>
   );
 };

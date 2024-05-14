@@ -99,13 +99,21 @@ const PoliceReportForm = () => {
     }
 };
 
+const WelcomeBanner = () => (
+  <section className="welcome-banner">
+   <h2>File a New Case</h2>
+   <p>Ensuring safetly and justice for all, taking a step forward in eradicating human trafficking</p>
+  </section>
+);
+
   
   return (
     <div className="police-reporting">
       <header className="header">
         <NavigationMenu/>
       </header>
-      <h1 style={{ textAlign: 'center' }}>New Police Report</h1>
+      <WelcomeBanner />
+      
       <form onSubmit={handleSubmit}>
         {/* <div className="form-group">
           <label htmlFor="caseNumber">Case Number</label>

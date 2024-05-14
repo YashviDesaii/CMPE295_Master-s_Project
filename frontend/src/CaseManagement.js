@@ -41,12 +41,19 @@ const CaseManagement = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const WelcomeBanner = () => (
+    <section className="welcome-banner">
+     <h2>Manage Cases</h2>
+     <p>Stay vigilant by tracking cases in real time</p>
+    </section>
+  );
+
   return (
     <div className="case-management-container">
       <header className="header">
         <NavigationMenu />
       </header>
-      <h1>Manage Your Cases</h1>
+      <WelcomeBanner />
 
       <div className="filters">
         <label htmlFor="statusFilter">Status</label>
@@ -58,17 +65,21 @@ const CaseManagement = () => {
         </select>
         <label htmlFor="officerFilter">Officer</label>
         <select id="officerFilter" value={filterOfficer} onChange={(e) => setFilterOfficer(e.target.value)}>
+
           <option value="">All Officers</option>
-          {cases.map((caseDetail, index) => (
-            <option key={index} value={caseDetail.reportingOfficer}>{caseDetail.reportingOfficer}</option>
+          {[...new Set(cases.map(caseDetail => caseDetail.reportingOfficer))].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })).map((officer, index) => (
+            <option key={index} value={officer}>{officer}</option>
           ))}
+
         </select>
+
         <label htmlFor="hotelFilter">Hotel</label>
         <select id="hotelFilter" value={filterHotel} onChange={(e) => setFilterHotel(e.target.value)}>
           <option value="">All Hotels</option>
-          {cases.map((caseDetail, index) => (
-            <option key={index} value={caseDetail.departmentLocation}>{caseDetail.departmentLocation}</option>
+          {[...new Set(cases.map(caseDetail => caseDetail.departmentLocation))].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })).map((caseDetail, index) => (
+          <option key={index} value={caseDetail}>{caseDetail}</option>
           ))}
+
         </select>
       </div>
 
