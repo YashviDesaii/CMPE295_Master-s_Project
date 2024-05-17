@@ -23,8 +23,6 @@ const Dashboard = () => {
       const fetchedHotels = hotelSnapshot.docs.map(doc => ({
         name: doc.data().ID,
         cases: Array.isArray(doc.data().relatedCases) ? doc.data().relatedCases.length : 0, 
-
-    
       }));
 
       const statusCounter = {};
@@ -50,7 +48,6 @@ const Dashboard = () => {
 
       setPoliceReports(fetchedReports);
       setHotels(fetchedHotels);
-      console.log(fetchedHotels);
       setStatusCounts(statusCounter);
       setDateCounts(dateCounter);
       setHotelCaseCounts(hotelCases);
@@ -154,26 +151,22 @@ const Dashboard = () => {
     </section>
   );
 
-  const CaseMetrics = () => (
-    <section className="case-metrics">
-      {/* Add the respective metric components here */}
-    </section>
-  );
-
   return (
     <div className="dashboard">
       <Header />
       <main>
         <WelcomeBanner />
-        <div className="chart-section">
-          <h3>Status of Cases</h3>
-          <Pie data={pieChartData} options={pieChartOptions} />
+        <div className="chart-container">
+          <div className="chart-section">
+            <h3>Status of Cases</h3>
+            <Pie data={pieChartData} options={pieChartOptions} />
+          </div>
+          <div className="chart-section">
+            <h3>Cases Reported Each Day</h3>
+            <Bar data={barChartData} options={barChartOptions} />
+          </div>
         </div>
-        <div className="chart-section">
-          <h3>Cases Reported Each Day</h3>
-          <Bar data={barChartData} options={barChartOptions} />
-        </div>
-        <div className="chart-section">
+        <div className="chart-section full-width">
           <h3>Number of Related Cases per Hotel</h3>
           <Bar data={hotelBarChartData} options={barChartOptions} />
         </div>

@@ -89,7 +89,6 @@ const HumanTraffickingPortal = () => {
   const [departments, setDepartments] = useState([]);
   const [incidentsCount, setIncidentsCount] = useState(0);
 
-
   useEffect(() => {
     fetch('https://data.seattle.gov/resource/kzjm-xkqj.json')
       .then(response => response.json())
@@ -133,17 +132,11 @@ const HumanTraffickingPortal = () => {
         <NavigationMenu />
       </header>
       <WelcomeBanner />
-      {/* <div className="search-section">
-        <h2>Human Trafficking Cases Map</h2>
-        <input type="text" placeholder="Search Location" />
-        <button>Search</button>
-      </div> */}
 
       <div className="cases-summary">
         <h3>Cases Summary</h3>
-        <p>Total Crime: {incidents.length}</p>
-        <p>Total Human Trafficking cases: {incidentsCount}</p>
-
+        <p>Total Crime Cases: {incidents.length}</p>
+        <p>Total Human Trafficking Cases: {incidentsCount}</p>
       </div>
 
       <div className="map-view">

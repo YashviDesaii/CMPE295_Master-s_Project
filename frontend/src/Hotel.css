@@ -1,96 +1,119 @@
-.hotel {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  .header {
-    background: #f0f0f0;
-    padding: 10px 0;
-  }
-  
-  .nav-list {
-    list-style: none;
-    padding: 0;
-    text-align: center;
-  }
-  
-  .nav-list li {
-    display: inline;
-    margin-right: 20px;
-  }
-  
-  .nav-list li a {
-    text-decoration: none;
-    color: black;
-  }
-  
-  .main-content {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .hotel-info, .related-cases {
-    width: 100%;
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
-    padding: 20px;
-  }
-  
-  .hotel-details, .hotel-images {
-    margin-bottom: 20px;
-  }
-  
-  .detail-group {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .detail {
-    margin: 10px;
-    flex-basis: 48%;
-  }
-  
-  .detail label {
-    font-weight: bold;
-  }
-  
-  .value {
-    border: 1px solid #ccc;
-    padding: 5px;
-    display: block; /* Change to block to allow for width to take effect */
-    width: 100%; /* Set to full width of the container */
-  }
-  
-  .images-group {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .hotel-images img {
-    width: 30%; /* Adjust the width as necessary */
-    margin-right: 2%; /* Provide some space between images */
-  }
-  
-  .cases-group {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .case {
-    border: 1px solid #ccc;
-    padding: 10px;
-    flex-basis: 30%; /* Adjust the width as necessary */
-    margin-right: 2%; /* Provide some space between cases */
-  }
-  
-  .footer {
-    background: #f0f0f0;
-    text-align: center;
-    padding: 10px 0;
-  }
-  
+/* Updated Hotel.css */
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  background-color: #343a40;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.welcome-banner {
+  background-color: #007bff;
+  color: white;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.welcome-banner h2 {
+  font-size: 2.5em;
+  margin: 0;
+}
+
+.welcome-banner p {
+  font-size: 1.2em;
+  margin: 10px 0 0;
+}
+
+.main-content {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.hotel-info {
+  text-align: center;
+}
+
+.hotel-info h1 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.hotel-info select {
+  font-size: 1em;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.hotel-info select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.hotel-images {
+  margin-top: 20px;
+}
+
+.hotel-images h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.hotel-images img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.related-cases {
+  margin-top: 20px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: left;
+}
+
+.related-cases h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.related-cases-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.related-cases-grid p {
+  flex: 1 1 calc(33.333% - 10px);
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 0;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+p {
+  margin: 0;
+}
+
+p + p {
+  margin-top: 10px;
+}

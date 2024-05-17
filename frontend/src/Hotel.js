@@ -49,12 +49,13 @@ function Hotel() {
             setSelectedHotelId('');
         }
     };
+
     const WelcomeBanner = () => (
         <section className="welcome-banner">
-         <h2>View all hotels</h2>
-         <p>Keep track of all the hotels allegedly involved in human trafficking</p>
+            <h2>View Hotels</h2>
+            <p>Keep track of all the hotels allegedly involved in human trafficking</p>
         </section>
-      );
+    );
 
     return (
         <div className="hotel">
@@ -84,14 +85,18 @@ function Hotel() {
                             ) : (
                                 <p>No image available.</p>
                             )}
-                            <h2>Related Cases</h2>
-                            {selectedHotelData.relatedCases.length > 0 ? (
-                                selectedHotelData.relatedCases.map((caseId, idx) => (
-                                    <p key={idx}>{caseId}</p>
-                                ))
-                            ) : (
-                                <p>No related cases.</p>
-                            )}
+                            <div className="related-cases">
+                                <h2>Related Cases</h2>
+                                {selectedHotelData.relatedCases.length > 0 ? (
+                                    <div className="related-cases-grid">
+                                        {selectedHotelData.relatedCases.map((caseId, idx) => (
+                                            <p key={idx}>{caseId}</p>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p>No related cases.</p>
+                                )}
+                            </div>
                         </div>
                     )}
                 </section>

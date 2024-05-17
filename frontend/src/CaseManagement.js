@@ -1,10 +1,9 @@
-// src/components/CaseManagement.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from './firebase';
 import NavigationMenu from './Navbar';
 import CaseDetailsList from './CaseDetailsList';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, query, onSnapshot } from 'firebase/firestore';
 import './CaseManagement.css';
 
 const CaseManagement = () => {
@@ -16,17 +15,16 @@ const CaseManagement = () => {
   const [filterHotel, setFilterHotel] = useState('');
 
   useEffect(() => {
-    const fetchCases = async () => {
-      const casesCollection = collection(db, 'policeReports');
-      const q = query(casesCollection);
-      const querySnapshot = await getDocs(q);
+    const q = query(collection(db, 'policeReports'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const casesData = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
       setCases(casesData);
-    };
-    fetchCases();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const filteredCases = cases.filter(caseDetail => (
@@ -65,21 +63,17 @@ const CaseManagement = () => {
         </select>
         <label htmlFor="officerFilter">Officer</label>
         <select id="officerFilter" value={filterOfficer} onChange={(e) => setFilterOfficer(e.target.value)}>
-
           <option value="">All Officers</option>
           {[...new Set(cases.map(caseDetail => caseDetail.reportingOfficer))].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })).map((officer, index) => (
             <option key={index} value={officer}>{officer}</option>
           ))}
-
         </select>
-
         <label htmlFor="hotelFilter">Hotel</label>
         <select id="hotelFilter" value={filterHotel} onChange={(e) => setFilterHotel(e.target.value)}>
           <option value="">All Hotels</option>
           {[...new Set(cases.map(caseDetail => caseDetail.departmentLocation))].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })).map((caseDetail, index) => (
-          <option key={index} value={caseDetail}>{caseDetail}</option>
+            <option key={index} value={caseDetail}>{caseDetail}</option>
           ))}
-
         </select>
       </div>
 

@@ -66,34 +66,37 @@ body {
     text-align: center;
     padding: 1rem;
   }
-
   .chart-container {
-    padding-top: 0%;
-    display: flex;
-    justify-content: center;
-    /* height: 150vh;  */
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
   }
   
-  .chart-container canvas {
-    max-width: 600px; 
-    max-height: 450px; 
-  }
   .chart-section {
-    margin: 20px auto; /* Center the chart and add vertical spacing */
-    padding: 15px;
-    max-width: 800px; /* Max width for each chart */
-    background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border-radius: 10px;
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      width: 48%;
+      text-align: center;
   }
   
-  .chart-container {
-    display: flex;
-    flex-direction: column; /* Stack charts vertically */
-    align-items: center; /* Center charts horizontally */
-    gap: 20px; /* Space between each chart */
+  .chart-section.full-width {
+      width: 100%;
+      margin: 20px 0;
+      padding: 20px;
   }
-
+  
+  .chart-section.full-width .chart-wrapper {
+      max-width: 80%;
+      margin: 0 auto;
+  }
+  
+  .chart-section h3 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+  }
+  
   .button {
     display: inline-block;
     border-radius: 4px;
@@ -133,5 +136,11 @@ body {
     opacity: 1;
     right: 0;
   }
-  
+  p {
+    margin: 0;
+}
+
+p + p {
+    margin-top: 10px;
+}
   

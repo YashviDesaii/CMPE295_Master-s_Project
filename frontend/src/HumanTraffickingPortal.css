@@ -1,78 +1,78 @@
+/* Updated HumanTraffickingPortal.css */
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  background-color: #343a40;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.welcome-banner {
+  background-color: #007bff;
+  color: white;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.welcome-banner h2 {
+  font-size: 2.5em;
+  margin: 0;
+}
+
+.welcome-banner p {
+  font-size: 1.2em;
+  margin: 10px 0 0;
+}
+
 .portal-container {
-    font-family: 'Arial', sans-serif;
-  }
-  
-  .portal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: #f3f3f3;
-  }
-  
-  .portal-header h1 {
-    margin: 0;
-  }
-  
-  .portal-header nav ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-  }
-  
-  .portal-header nav ul li {
-    margin-right: 20px;
-    cursor: pointer;
-  }
-  
-  .search-section {
-    padding: 20px;
-  }
-  
-  .search-section h2 {
-    margin: 0 0 10px 0;
-  }
-  
-  .search-section input {
-    margin-right: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .search-section button {
-    padding: 10px 20px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .cases-summary {
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-  
-  .cases-summary h3 {
-    margin: 0;
-  }
-  
-  .cases-summary .region-summary > div {
-    margin-top: 10px;
-    background-color: #fff;
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  .map-view {
-    padding: 20px;
-    text-align: center;
-  }
-  
-  footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #f3f3f3;
-  }
-  
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cases-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cases-summary h3 {
+  font-size: 1.8em;
+  margin: 10px 0;
+}
+
+.cases-summary p {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  margin: 5px 0;
+  flex: 1;
+  width: 100%;
+  max-width: 300px;
+}
+
+.map-view {
+  margin-top: 20px;
+}
+
+p {
+  margin: 0;
+}
+
+p + p {
+  margin-top: 10px;
+}
