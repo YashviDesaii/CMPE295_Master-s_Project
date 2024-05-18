@@ -3,9 +3,11 @@ Contains functions for training and testing a PyTorch model.
 """
 import torch
 import os
+import torch.nn as nn
+import torch.nn.functional as F
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
-
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 def train_step(model: torch.nn.Module, 
                dataloader: torch.utils.data.DataLoader, 
@@ -332,5 +334,188 @@ def resume_train(model: torch.nn.Module,
             'test_loss': test_loss,
             'test_acc': test_acc
         }, checkpoint_path)
+
+    return results
+
+def train_with_early_stopping(model: torch.nn.Module, 
+          train_dataloader: torch.utils.data.DataLoader, 
+          test_dataloader: torch.utils.data.DataLoader, 
+          optimizer: torch.optim.Optimizer,
+          loss_fn: torch.nn.Module,
+          epochs: int,
+          device: torch.device,
+          checkpoint_dir: str = 'checkpoints',
+          patience: int = 3) -> Dict[str, List]:
+    """Trains and tests a PyTorch model with early stopping.
+
+    Args:
+    model: A PyTorch model to be trained and tested.
+    train_dataloader: A DataLoader instance for the model to be trained on.
+    test_dataloader: A DataLoader instance for the model to be tested on.
+    optimizer: A PyTorch optimizer to help minimize the loss function.
+    loss_fn: A PyTorch loss function to calculate loss on both datasets.
+    epochs: An integer indicating how many epochs to train for.
+    device: A target device to compute on (e.g. "cuda" or "cpu").
+    checkpoint_dir: Directory to save model checkpoints.
+    patience: Number of epochs to wait without improvement before stopping.
+
+    Returns:
+    A dictionary of training and testing loss as well as training and
+    testing accuracy metrics.
+    """
+    # Create empty results dictionary
+    results = {"train_loss": [],
+               "train_acc": [],
+               "test_loss": [],
+               "test_acc": []
+    }
+    
+    # Make sure model is on target device
+    model.to(device)
+
+    # Create checkpoint directory if it doesn't exist
+    os.makedirs(checkpoint_dir, exist_ok=True)
+
+    # Setup early stopping
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=patience, verbose=True)
+
+    # Initialize early stopping variables
+    best_test_loss = float('inf')
+    epochs_without_improvement = 0
+
+    # Loop through training and testing steps for a number of epochs
+    for epoch in tqdm(range(epochs)):
+        train_loss, train_acc = train_step(model=model,
+                                          dataloader=train_dataloader,
+                                          loss_fn=loss_fn,
+                                          optimizer=optimizer,
+                                          device=device)
+        test_loss, test_acc = test_step(model=model,
+                                        dataloader=test_dataloader,
+                                        loss_fn=loss_fn,
+                                        device=device)
+
+        # Print out what's happening
+        print(
+            f"Epoch: {epoch + 1} | "
+            f"train_loss: {train_loss:.4f} | "
+            f"train_acc: {train_acc:.4f} | "
+            f"test_loss: {test_loss:.4f} | "
+            f"test_acc: {test_acc:.4f}"
+        )
+
+        # Update results dictionary
+        results["train_loss"].append(train_loss)
+        results["train_acc"].append(train_acc)
+        results["test_loss"].append(test_loss)
+        results["test_acc"].append(test_acc)
+
+        # Save model checkpoint if test loss improves
+        if test_loss < best_test_loss:
+            best_test_loss = test_loss
+            epochs_without_improvement = 0
+            checkpoint_path = os.path.join(checkpoint_dir, 'best_checkpoint.pth')
+            torch.save(model.state_dict(), checkpoint_path)
+        else:
+            epochs_without_improvement += 1
+
+        # Check for early stopping
+        if epochs_without_improvement >= patience:
+            print(f"Early stopping at epoch {epoch + 1}")
+            break
+
+        # Step the scheduler based on validation loss
+        scheduler.step(test_loss)
+
+    # Return the filled results at the end of the epochs
+    return results
+
+# Define the ArcFaceLoss class
+class ArcFaceLoss(nn.Module):
+    def __init__(self, s=30.0, m=0.5):
+        super(ArcFaceLoss, self).__init__()
+        self.s = s
+        self.m = m
+
+    def forward(self, logits, labels):
+        theta = torch.acos(torch.clamp(logits, -1.0 + 1e-7, 1.0 - 1e-7))
+        target_logits = torch.cos(theta + self.m)
+        one_hot_labels = F.one_hot(labels, num_classes=logits.size(-1))
+        output = self.s * torch.where(one_hot_labels.bool(), target_logits - logits, logits)
+        return F.cross_entropy(output, labels)
+
+def train_step_arcface(model, dataloader, loss_fn, optimizer, device):
+    model.train()
+    total_loss = 0.0
+    correct_predictions = 0
+    total_predictions = 0
+
+    for inputs, labels in dataloader:
+        inputs, labels = inputs.to(device), labels.to(device)
+
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = loss_fn(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+        _, predicted = torch.max(outputs, 1)
+        correct_predictions += (predicted == labels).sum().item()
+        total_predictions += labels.size(0)
+
+    epoch_loss = total_loss / len(dataloader)
+    epoch_acc = correct_predictions / total_predictions
+    return epoch_loss, epoch_acc
+
+def train_with_arcface(model, train_dataloader, test_dataloader, optimizer, loss_fn, epochs, device, checkpoint_dir='checkpoints', patience=3):
+    results = {"train_loss": [], "train_acc": [], "test_loss": [], "test_acc": []}
+    model.to(device)
+    os.makedirs(checkpoint_dir, exist_ok=True)
+
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=patience, verbose=True)
+    best_test_loss = float('inf')
+    epochs_without_improvement = 0
+
+    for epoch in tqdm(range(epochs)):
+        train_loss, train_acc = train_step_arcface(model, train_dataloader, loss_fn, optimizer, device)
+        test_loss, test_acc = train_step_arcface(model, test_dataloader, loss_fn, optimizer, device)
+
+        results["train_loss"].append(train_loss)
+        results["train_acc"].append(train_acc)
+        results["test_loss"].append(test_loss)
+        results["test_acc"].append(test_acc)
+	# Print and update results
+        print(
+            f"Epoch: {epoch+1} | "
+            f"train_loss: {train_loss:.4f} | "
+            f"train_acc: {train_acc:.4f} | "
+            f"test_loss: {test_loss:.4f} | "
+            f"test_acc: {test_acc:.4f}"
+        )
+        checkpoint_path = os.path.join(checkpoint_dir, f'checkpoint_epoch_{epoch + 1}.pth')
+        torch.save({
+            'epoch': epoch + 1,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'train_loss': train_loss,
+            'train_acc': train_acc,
+            'test_loss': test_loss,
+            'test_acc': test_acc
+        }, checkpoint_path)
+
+        if test_loss < best_test_loss:
+            best_test_loss = test_loss
+            epochs_without_improvement = 0
+            best_checkpoint_path = os.path.join(checkpoint_dir, 'best_checkpoint.pth')
+            torch.save(model.state_dict(), best_checkpoint_path)
+        else:
+            epochs_without_improvement += 1
+
+        if epochs_without_improvement >= patience:
+            print(f"Early stopping at epoch {epoch + 1}")
+            break
+
+        scheduler.step(test_loss)
 
     return results
